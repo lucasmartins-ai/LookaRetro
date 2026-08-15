@@ -20,4 +20,8 @@ gbc	adjustris.gb	Adjustris	tbsp	CC0-1.0	https://github.com/tbsp/Adjustris/releas
 gbc	ucity.gbc	uCity	AntonioND	GPL-3.0	https://github.com/AntonioND/ucity/releases/download/v1.3/ucity.gbc
 gba	celeste.gba	Celeste Classic	JeffRuLz	MIT	https://github.com/JeffRuLz/Celeste-Classic-GBA/releases/download/v1.2/Celeste.Classic.v1.2.Homebrew.gba
 snes	space-rescue-squad.sfc	Space Rescue Squad (Demo)	undisbeliever	open source (author demo)	https://github.com/undisbeliever/space-rescue-squad/releases/download/game-jam-v1.1/Space.Rescue.Squad.Demo.v1.1.zip
+snes	cannons.sfc	Cannons	undisbeliever	MIT	https://github.com/undisbeliever/cannons/releases/download/v1.02/Cannons.v1.02.zip
+snes	asteroids.sfc	Asteroids	undisbeliever	MIT	https://github.com/undisbeliever/asteroids/releases/download/v1.03/Asteroids.v1.03.zip
+snes	pong.sfc	Pong	undisbeliever	MIT	https://github.com/undisbeliever/pong/releases/download/1gam/Pong.v01.HB.zip
+snes	memory-game.sfc	Memory Game	undisbeliever	MIT	https://github.com/undisbeliever/memory-game/releases/download/v1.02/Memory.Game.v1.02.zip
 n64	moonfish.z64	Moonfish (Demo)	Team GTvLC	open source (author demo)	https://github.com/hadahlia/moonfish/releases/download/v2/moonfish.z64

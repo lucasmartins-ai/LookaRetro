@@ -241,16 +241,37 @@ FocusScope {
                 Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
                 Behavior on opacity { NumberAnimation { duration: 180 } }
 
+                property bool isOpenSource: modelData.shortName === "open-source"
+                property color cardColor: isOpenSource ? "#00e676" : root.accent(index)
+
                 Rectangle {
                     anchors.fill: parent
                     radius: vpx(20)
                     gradient: Gradient {
-                        GradientStop { position: 0.0; color: root.accent(index) }
+                        GradientStop { position: 0.0; color: cardColor }
                         GradientStop { position: 0.55; color: "#1b1f2e" }
                         GradientStop { position: 1.0; color: "#12151f" }
                     }
                     border.width: ListView.isCurrentItem ? vpx(3) : vpx(1)
-                    border.color: ListView.isCurrentItem ? root.accent(index) : "#2a2f3d"
+                    border.color: ListView.isCurrentItem ? cardColor : "#2a2f3d"
+                }
+
+                Rectangle {
+                    visible: isOpenSource
+                    anchors { top: parent.top; right: parent.right; topMargin: vpx(16); rightMargin: vpx(16) }
+                    width: badgeText.width + vpx(24)
+                    height: vpx(32)
+                    radius: vpx(16)
+                    color: "#00e676"
+                    Text {
+                        id: badgeText
+                        anchors.centerIn: parent
+                        text: "\u2193 DOWNLOAD"
+                        font.family: global.fonts.condensedBold
+                        font.pixelSize: vpx(13)
+                        font.letterSpacing: 1
+                        color: "#06210f"
+                    }
                 }
 
                 Text {
@@ -276,7 +297,7 @@ FocusScope {
                     font.family: global.fonts.condensed
                     font.pixelSize: vpx(14)
                     font.letterSpacing: 3
-                    color: root.accent(index)
+                    color: cardColor
                 }
             }
         }
