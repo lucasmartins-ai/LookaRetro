@@ -24,11 +24,23 @@ OS="$(uname -s)"
 # Emulator invocations per OS
 # ---------------------------------------------------------------------------
 if [[ "$OS" == "Darwin" ]]; then
-    RETROARCH="/Applications/RetroArch.app/Contents/MacOS/RetroArch"
-    DUCKSTATION="/Applications/DuckStation.app/Contents/MacOS/DuckStation"
-    DOLPHIN="/Applications/Dolphin.app/Contents/MacOS/Dolphin"
+    RETROARCH=( "/Applications/RetroArch.app/Contents/MacOS/RetroArch" )
+    DUCKSTATION=( "/Applications/DuckStation.app/Contents/MacOS/DuckStation" )
+    DOLPHIN=( "/Applications/Dolphin.app/Contents/MacOS/Dolphin" )
     CORES_DIR="${CORES_DIR:-$HOME/Library/Application Support/RetroArch/cores}"
     CORE_EXT="dylib"
+    # Pegasus Frontend has no arm64 macOS build (it runs x86_64 under Rosetta),
+    # so every child it spawns would execute as x86_64 too — and the arm64
+    # libretro cores would fail to load ("incompatible architecture"). Force the
+    # emulators to run natively on Apple Silicon.
+    #
+    # Detect the HARDWARE via sysctl, not `uname -m`: inside a Rosetta process
+    # uname reports x86_64 even on Apple Silicon, which would skip this block.
+    if [[ "$(sysctl -n hw.optional.arm64 2>/dev/null)" == "1" ]]; then
+        RETROARCH=( /usr/bin/arch -arm64 "${RETROARCH[0]}" )
+        DUCKSTATION=( /usr/bin/arch -arm64 "${DUCKSTATION[0]}" )
+        DOLPHIN=( /usr/bin/arch -arm64 "${DOLPHIN[0]}" )
+    fi
 elif [[ "$OS" == "Linux" ]]; then
     # Emulators are installed as Flatpaks (see install-linux.sh).
     RETROARCH=( flatpak run org.libretro.RetroArch )

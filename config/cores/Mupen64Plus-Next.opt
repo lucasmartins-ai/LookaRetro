@@ -1,0 +1,13 @@
+# LookaRetro — Mupen64Plus-Next core options (Nintendo 64).
+# Deployed to <RetroArch>/config/Mupen64Plus-Next/Mupen64Plus-Next.opt.
+#
+# GLideN64 (the core default) breaks on macOS: it uses legacy
+# GL_TEXTURE_INDEX_2D fixed-function texture units that do not exist in
+# macOS's OpenGL core profile — audio plays but the screen stays black.
+#
+# ParaLLEl-RDP renders via Vulkan (MoltenVK is bundled with RetroArch) and is
+# GPU-accelerated and fast. Fallback: "angrylion" (software renderer, works
+# everywhere, slower). macOS builds of this core have no CPU dynarec, so the
+# GPU RDP is what keeps N64 playable here.
+mupen64plus-rdp-plugin = "parallel"
+mupen64plus-rsp-plugin = "parallel"

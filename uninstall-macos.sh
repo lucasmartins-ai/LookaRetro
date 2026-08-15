@@ -49,5 +49,11 @@ fi
 revert "Re-enabling sleep (disablesleep 0)" \
     sudo /usr/bin/pmset -a disablesleep 0
 
+# The installer also zeroed the idle timers (sleep/disksleep/displaysleep 0,
+# standby/autopoweroff 0) — restore macOS-standard values, otherwise the Mac
+# still never sleeps on its own.
+revert "Restoring standard sleep timers (10 min idle, standby on)" \
+    sudo /usr/bin/pmset -a sleep 10 disksleep 10 displaysleep 10 standby 1 autopoweroff 1
+
 echo
 echo "Done. Emulators, configs and ROMs were left untouched."

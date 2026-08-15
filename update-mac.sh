@@ -6,6 +6,8 @@
 #
 # O que faz:
 #   1. Atualiza scripts, catálogo open source e o tema v1.2.0 (pixel-art + LotR).
+#   1b. Corrige o RetroArch: se o build instalado for x86_64 (Rosetta), troca
+#       pelo build universal/Metal para os cores arm64 funcionarem (GBA/N64/DS).
 #   2. Organiza as ROMs de ~/Retro/roms/ROMs1/ para as pastas certas
 #      (snes / n64 / gba / gbc / nds / psx), extraindo os .zip/.7z.
 #   3. Regenera as listas de jogos do Pegasus.
@@ -31,6 +33,8 @@ step "Atualizando tema, scripts e catálogo"
 mkdir -p "$R/scripts" "$R/catalog"
 cp -f "$REPO/lib/launch.sh" "$REPO/lib/import-roms.sh" \
       "$REPO/lib/fetch-and-play.sh" "$REPO/lib/make-open-source-catalog.sh" \
+      "$REPO/lib/make-settings-catalog.sh" "$REPO/lib/pegasus-settings.sh" \
+      "$REPO/lib/setup-controllers.sh" \
       "$R/scripts/"
 chmod +x "$R/scripts/"*.sh
 cp -f "$REPO/catalog/open-source.tsv" "$R/catalog/"
@@ -44,8 +48,31 @@ info "tema v1.2.0 instalado"
     echo "# LookaRetro game directories"
     for s in snes gbc gba n64 nds psx wii; do echo "$R/roms/$s"; done
     echo "$R/roms-open-source"
+    echo "$R/roms-settings"
 } > "$PEG/game_dirs.txt"
 info "game_dirs.txt atualizado"
+
+# ---------------------------------------------------------------------------
+# 1b. Corrigir arquitetura do RetroArch (x86_64 -> universal/Metal)
+# ---------------------------------------------------------------------------
+if [[ "$(sysctl -n hw.optional.arm64 2>/dev/null)" == "1" ]]; then
+    RA_BIN="/Applications/RetroArch.app/Contents/MacOS/RetroArch"
+    if [[ -f "$RA_BIN" ]] && ! file "$RA_BIN" | grep -q "arm64"; then
+        step "Corrigindo RetroArch (x86_64 -> build universal/Metal)"
+        info "O RetroArch instalado é x86_64 (Rosetta) e NÃO carrega os cores arm64"
+        info "baixados do buildbot (erro 'incompatible architecture')."
+        info "Trocando pelo build universal/Metal (nativo, sem Rosetta)..."
+        if ! command -v brew >/dev/null 2>&1; then
+            printf '%s[error]%s Homebrew não encontrado — instale em https://brew.sh e rode de novo.\n' "$c_warn" "$c_off"
+        else
+            brew uninstall --cask retroarch || true
+            brew install --cask retroarch-metal
+            info "RetroArch universal instalado. Config e cores foram preservados."
+        fi
+    else
+        info "RetroArch já é universal/arm64 — nada a fazer."
+    fi
+fi
 
 # ---------------------------------------------------------------------------
 # 2. Organizar ROMs
@@ -148,6 +175,17 @@ fi
 step "Regenerando listas de jogos"
 bash "$R/scripts/import-roms.sh"
 bash "$R/scripts/make-open-source-catalog.sh"
+bash "$R/scripts/make-settings-catalog.sh"
+
+# ---------------------------------------------------------------------------
+# 3b. Configurar os controles em todos os emuladores (P1/P2, Dolphin, DuckStation)
+# ---------------------------------------------------------------------------
+step "Configurando controles (RetroArch/Dolphin/DuckStation)"
+if [[ -f "$REPO/lib/setup-controllers.sh" ]]; then
+    bash "$REPO/lib/setup-controllers.sh" || say "  [aviso] setup de controles falhou — rode manualmente: bash $R/scripts/setup-controllers.sh"
+else
+    say "  [aviso] setup-controllers.sh não encontrado no repo — copie o LookaRetro atualizado."
+fi
 
 say ""
 say "${c_bold}Pronto!${c_off} Abra o Pegasus.app (Finder ou Dock) — ou pressione F5 nele — para ver os jogos."

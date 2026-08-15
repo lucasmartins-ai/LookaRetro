@@ -3,6 +3,7 @@
 
 # Reasonix / agent metadata — never publish
 .reasonix/
+reasonix.toml
 
 # Temporary downloads / scratch
 *.tmp

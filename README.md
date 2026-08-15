@@ -30,7 +30,7 @@ Guia detalhado por plataforma: [docs/WINDOWS.md](docs/WINDOWS.md) · [docs/LINUX
 
 | Sistema | macOS (arm64) | Windows | Linux (Flatpak) |
 |---|---|---|---|
-| SNES/GBC/GBA/N64/DS | RetroArch (cores buildbot) | RetroArch (winget) | RetroArch (`org.libretro.RetroArch`) |
+| SNES/GBC/GBA/N64/DS | RetroArch (universal/Metal, arm64) | RetroArch (winget) | RetroArch (`org.libretro.RetroArch`) |
 | PlayStation 1 | DuckStation (nativo) | DuckStation (zip) | DuckStation (`org.duckstation.DuckStation`) |
 | Wii | Dolphin (nativo) | Dolphin (winget) | Dolphin (`org.DolphinEmu.dolphin-emu`) |
 | UI | Pegasus (x86_64/Rosetta 2) | Pegasus (`pegasus-fe.exe`) | Pegasus (x11-static) |
@@ -128,7 +128,30 @@ Navegação no tema LookaRetro (padrões do Pegasus, iguais nas 3 plataformas):
 
 Dentro do RetroArch: **L3 + R3** abre o menu; **Close Content** fecha o jogo e volta ao Pegasus.
 
+**2 jogadores (Xbox Wireless, padrão):** os dois pads são mapeados automaticamente em
+todos os emuladores (P1 = primeiro a conectar, P2 = segundo) — RetroArch fixa os slots
+de joypad, Dolphin usa o perfil "SDL Gamepad" (GC) + Wii Remote emulado (analógico
+direito = cursor, esquerdo = shake) e o DuckStation usa layout DualShock com rumble.
+Recorra o setup a qualquer momento com `bash ~/Retro/scripts/setup-controllers.sh` (ou pelo item **Reconfigurar Controles** no painel do Pegasus).
+
 Configuração por emulador: [docs/CONTROLS.md](docs/CONTROLS.md).
+
+## Configurações pelo painel (sem terminal)
+
+O Pegasus ganha uma coleção **"LookaRetro Config"** com ajustes ativados direto do
+controle/teclado (cada item roda sua ação e mostra um aviso na tela):
+
+| Item | O que faz |
+|---|---|
+| **Modo Console — nunca dormir** | Ativa o modo console (sem sleep, tampa fechada OK) — pede a senha |
+| **Modo Normal — dormir** | Restaura o sleep padrão do macOS (10 min) — pede a senha |
+| **N64 — Turbo (GPU)** | Renderizador ParaLLEl-RDP (Vulkan): N64 rápido |
+| **N64 — Compatível** | Renderizador Angrylion (software): se um jogo abrir preto no Turbo |
+| **Reconfigurar Controles** | Reaplica o mapeamento dos 2 controles em todos os emuladores |
+| **Atualizar Listas de Jogos** | Regenera as listas do Pegasus (depois pressione F5) |
+
+A coleção é gerada por `make-settings-catalog.sh` e as ações ficam em
+`pegasus-settings.sh` (ambos em `~/Retro/scripts/`).
 
 ---
 
@@ -182,13 +205,15 @@ LookaRetro/
 
 ## FAQ
 
-**Por que o Pegasus no macOS é x86_64?** O build oficial para macOS é x86_64 (roda via Rosetta 2, instalado automaticamente). É só a interface — os emuladores rodam nativos em arm64.
+**Por que o Pegasus no macOS é x86_64?** O build oficial para macOS é x86_64 (roda via Rosetta 2, instalado automaticamente). É só a interface — o `launch.sh` força `arch -arm64` nos emuladores (RetroArch/DuckStation/Dolphin), então eles rodam **nativos em arm64** e carregam os cores arm64 mesmo sendo iniciados pelo Pegasus.
 
 **Digimon World Next Order / Re:Digitize?** São de PS4/PS Vita e PSP/3DS — fora dos sistemas suportados. Posso estender com PPSSPP (PSP) ou Citra (3DS) depois.
 
 **O Mac ainda dorme com a tampa fechada?** Confira `pmset -g live | grep SleepDisabled` (deve ser `1`). Conflito com apps como Amphetamine/AlDente é possível.
 
 **Linux: o jogo não abre?** Confira se `flatpak run org.libretro.RetroArch` funciona sozinho e se o core existe em `~/.var/app/org.libretro.RetroArch/config/retroarch/cores/`.
+
+**N64 com áudio mas tela preta no macOS?** O renderizador padrão do core Mupen64Plus-Next (GLideN64) usa recursos de OpenGL legado que não existem no perfil *core* do macOS — o instalador troca automaticamente para **ParaLLEl-RDP** (Vulkan/MoltenVK, com aceleração de GPU). Se um jogo específico abrir preto, troque para o software renderer **Angrylion** — pelo painel do Pegasus (item **N64 — Compatível**) ou `setup-controllers.sh --n64-angrylion`.
 
 **Windows: winget não existe?** Instale o "App Installer" da Microsoft Store ou instale os emuladores manualmente e ajuste `%USERPROFILE%\Retro\scripts\emulators.ps1`.
 

@@ -94,7 +94,20 @@ fi
 # 1. RetroArch + Dolphin (Homebrew casks)
 # ---------------------------------------------------------------------------
 step "Installing RetroArch and Dolphin (Homebrew casks)"
-run brew install --cask retroarch dolphin
+# The `retroarch` cask ships an x86_64-only build: on Apple Silicon it runs
+# under Rosetta and CANNOT load the arm64 libretro cores downloaded below
+# (dlopen fails with "incompatible architecture"). Use the universal Metal
+# build (`retroarch-metal`) on Apple Silicon so RetroArch runs native arm64
+# and the arm64 cores load. Intel Macs keep the classic build.
+if arch_ok; then
+    if brew list --cask retroarch >/dev/null 2>&1; then
+        warn "Replacing x86_64 RetroArch with the universal (Metal) build..."
+        run brew uninstall --cask retroarch
+    fi
+    run brew install --cask retroarch-metal dolphin
+else
+    run brew install --cask retroarch dolphin
+fi
 
 # ---------------------------------------------------------------------------
 # 2. DuckStation + Pegasus (direct downloads, universal/macOS builds)
@@ -175,8 +188,13 @@ run cp -f "$REPO_DIR/lib/launch.sh"       "$RETRO_HOME/scripts/launch.sh"
 run cp -f "$REPO_DIR/lib/import-roms.sh"  "$RETRO_HOME/scripts/import-roms.sh"
 run cp -f "$REPO_DIR/lib/fetch-and-play.sh" "$RETRO_HOME/scripts/fetch-and-play.sh"
 run cp -f "$REPO_DIR/lib/make-open-source-catalog.sh" "$RETRO_HOME/scripts/make-open-source-catalog.sh"
+run cp -f "$REPO_DIR/lib/make-settings-catalog.sh"    "$RETRO_HOME/scripts/make-settings-catalog.sh"
+run cp -f "$REPO_DIR/lib/pegasus-settings.sh"         "$RETRO_HOME/scripts/pegasus-settings.sh"
+run cp -f "$REPO_DIR/lib/setup-controllers.sh"        "$RETRO_HOME/scripts/setup-controllers.sh"
 run chmod +x "$RETRO_HOME/scripts/launch.sh" "$RETRO_HOME/scripts/import-roms.sh" \
-             "$RETRO_HOME/scripts/fetch-and-play.sh" "$RETRO_HOME/scripts/make-open-source-catalog.sh"
+             "$RETRO_HOME/scripts/fetch-and-play.sh" "$RETRO_HOME/scripts/make-open-source-catalog.sh" \
+             "$RETRO_HOME/scripts/make-settings-catalog.sh" "$RETRO_HOME/scripts/pegasus-settings.sh" \
+             "$RETRO_HOME/scripts/setup-controllers.sh"
 run cp -f "$REPO_DIR/catalog/open-source.tsv" "$RETRO_HOME/catalog/open-source.tsv"
 
 run cp -f "$REPO_DIR/config/retroarch.cfg" "$RETRO_HOME/config/retroarch.cfg"
@@ -212,6 +230,7 @@ if [[ "$DRY_RUN" -eq 0 ]]; then
             echo "$RETRO_HOME/roms/$s"
         done
         echo "$RETRO_HOME/roms-open-source"
+        echo "$RETRO_HOME/roms-settings"
     } > "$PEGASUS_CFG_DIR/game_dirs.txt"
 else
     info "Would write $PEGASUS_CFG_DIR/game_dirs.txt"
@@ -228,8 +247,15 @@ if [[ "$DRY_RUN" -eq 0 ]]; then
         warn "RetroArch config exists — backing up to retroarch.cfg.lookaretro.bak"
         cp -f "$RA_CFG_DIR/retroarch.cfg" "$RA_CFG_DIR/retroarch.cfg.lookaretro.bak"
     fi
-    # RetroArch config = shared + macOS driver snippet
+    # RetroArch config = shared + macOS driver snippet.
+    # NOTE: this RetroArch build loads its main config from
+    # "<RetroArch>/config/retroarch.cfg" (not the root), so we write BOTH —
+    # the root file (first-run/default) and the active one.
     cat "$REPO_DIR/config/retroarch.cfg" "$REPO_DIR/config/platform/macos.cfg" > "$RA_CFG_DIR/retroarch.cfg"
+    if [[ -f "$RA_CFG_DIR/config/retroarch.cfg" ]]; then
+        cp -f "$RA_CFG_DIR/config/retroarch.cfg" "$RA_CFG_DIR/config/retroarch.cfg.lookaretro.bak"
+    fi
+    cat "$REPO_DIR/config/retroarch.cfg" "$REPO_DIR/config/platform/macos.cfg" > "$RA_CFG_DIR/config/retroarch.cfg"
 
     # Per-core overrides: config/<Core>/<Core>.cfg
     install_override() {
@@ -243,6 +269,17 @@ if [[ "$DRY_RUN" -eq 0 ]]; then
     install_override "melonDS"           "melonds.cfg"
     install_override "Mupen64Plus-Next"  "mupen64plus_next.cfg"
 
+    # Per-core core options (N64): ParaLLEl-RDP renderer via Vulkan/MoltenVK
+    # (GLideN64 default = black screen on macOS core-profile OpenGL; Angrylion
+    # software is the fallback). Read by RetroArch from config/<Core>/<Core>.opt
+    # on every launch and regenerated on exit (values are preserved).
+    install_core_options() {
+        local corename="$1" optname="$2"
+        mkdir -p "$RA_CFG_DIR/config/$corename"
+        cp -f "$REPO_DIR/config/cores/$optname" "$RA_CFG_DIR/config/$corename/$optname"
+    }
+    install_core_options "Mupen64Plus-Next" "Mupen64Plus-Next.opt"
+
     # Dolphin: minimal GFX.ini with fullscreen enabled
     DOLPHIN_CFG_DIR="$HOME/Library/Application Support/Dolphin/Config"
     mkdir -p "$DOLPHIN_CFG_DIR"
@@ -250,6 +287,11 @@ if [[ "$DRY_RUN" -eq 0 ]]; then
         cp -f "$DOLPHIN_CFG_DIR/GFX.ini" "$DOLPHIN_CFG_DIR/GFX.ini.lookaretro.bak"
     fi
     cp -f "$REPO_DIR/config/dolphin/GFX.ini" "$DOLPHIN_CFG_DIR/GFX.ini"
+
+    # Dolphin: two-player controller configs (GC pads + emulated Wii Remotes,
+    # mapped to Xbox controllers; SDL/0 = P1, SDL/1 = P2).
+    cp -f "$REPO_DIR/config/dolphin/GCPadNew.ini"  "$DOLPHIN_CFG_DIR/GCPadNew.ini"
+    cp -f "$REPO_DIR/config/dolphin/WiimoteNew.ini" "$DOLPHIN_CFG_DIR/WiimoteNew.ini"
 else
     info "Would write RetroArch config + per-core overrides + Dolphin GFX.ini"
 fi
@@ -265,6 +307,12 @@ run bash "$RETRO_HOME/scripts/import-roms.sh"
 # ---------------------------------------------------------------------------
 step "Building the Open Source catalog"
 run bash "$RETRO_HOME/scripts/make-open-source-catalog.sh"
+
+# ---------------------------------------------------------------------------
+# 7c. LookaRetro Config collection (settings toggles inside Pegasus)
+# ---------------------------------------------------------------------------
+step "Building the LookaRetro Config collection"
+run bash "$RETRO_HOME/scripts/make-settings-catalog.sh"
 
 # ---------------------------------------------------------------------------
 # 8. Optional system-wide "console mode"
