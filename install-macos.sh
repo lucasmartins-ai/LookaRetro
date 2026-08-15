@@ -186,8 +186,7 @@ run cp -f "$REPO_DIR/config/dolphin/GFX.ini" "$RETRO_HOME/config/dolphin/GFX.ini
 # Pegasus theme
 PEGASUS_CFG_DIR="$HOME/Library/Preferences/pegasus-frontend"
 run mkdir -p "$PEGASUS_CFG_DIR/themes/LookaRetro"
-run cp -f "$REPO_DIR/theme/LookaRetro/theme.cfg" "$PEGASUS_CFG_DIR/themes/LookaRetro/theme.cfg"
-run cp -f "$REPO_DIR/theme/LookaRetro/theme.qml" "$PEGASUS_CFG_DIR/themes/LookaRetro/theme.qml"
+run cp -R "$REPO_DIR/theme/LookaRetro/." "$PEGASUS_CFG_DIR/themes/LookaRetro/"
 
 # ---------------------------------------------------------------------------
 # 5. Wire Pegasus to the ROM library

@@ -145,6 +145,7 @@ $themeDir = Join-Path $PEG_DIR 'themes\LookaRetro'
 New-Item -ItemType Directory -Force -Path $themeDir | Out-Null
 Copy-Item (Join-Path $REPO_DIR 'theme\LookaRetro\theme.cfg') (Join-Path $themeDir 'theme.cfg') -Force
 Copy-Item (Join-Path $REPO_DIR 'theme\LookaRetro\theme.qml') (Join-Path $themeDir 'theme.qml') -Force
+Copy-Item (Join-Path $REPO_DIR 'theme\LookaRetro\assets') (Join-Path $themeDir 'assets') -Recurse -Force
 
 # ---------------------------------------------------------------------------
 Step 'Configuring Pegasus Frontend'

@@ -177,8 +177,7 @@ run cp -f "$REPO_DIR/catalog/open-source.tsv" "$RETRO_HOME/catalog/open-source.t
 
 PEG_CFG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/pegasus-frontend"
 run mkdir -p "$PEG_CFG_DIR/themes/LookaRetro"
-run cp -f "$REPO_DIR/theme/LookaRetro/theme.cfg" "$PEG_CFG_DIR/themes/LookaRetro/theme.cfg"
-run cp -f "$REPO_DIR/theme/LookaRetro/theme.qml" "$PEG_CFG_DIR/themes/LookaRetro/theme.qml"
+run cp -R "$REPO_DIR/theme/LookaRetro/." "$PEG_CFG_DIR/themes/LookaRetro/"
 
 if [[ "$DRY_RUN" -eq 0 ]]; then
     cat > "$PEG_CFG_DIR/settings.txt" <<EOF

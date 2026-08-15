@@ -26,7 +26,7 @@ copy_common() {
     cp "$REPO_DIR/config/retroarch.cfg" "$dest/config/"
     cp "$REPO_DIR/config/cores/"*.cfg "$dest/config/cores/"
     cp "$REPO_DIR/config/dolphin/GFX.ini" "$dest/config/dolphin/"
-    cp "$REPO_DIR/theme/LookaRetro/theme.cfg" "$REPO_DIR/theme/LookaRetro/theme.qml" "$dest/theme/LookaRetro/"
+    cp -R "$REPO_DIR/theme/LookaRetro/." "$dest/theme/LookaRetro/"
     cp "$REPO_DIR/docs/"*.md "$dest/docs/"
     cp "$REPO_DIR/catalog/open-source.tsv" "$dest/catalog/"
 }
@@ -60,7 +60,7 @@ cp "$REPO_DIR/config/platform/windows.cfg" "$W/config/platform/"
 # --- theme only -----------------------------------------------------------
 T="$STAGE/theme/LookaRetro"
 mkdir -p "$T"
-cp "$REPO_DIR/theme/LookaRetro/theme.cfg" "$REPO_DIR/theme/LookaRetro/theme.qml" "$T/"
+cp -R "$REPO_DIR/theme/LookaRetro/." "$T/"
 
 # --- zip ------------------------------------------------------------------
 mkdir -p "$DIST"

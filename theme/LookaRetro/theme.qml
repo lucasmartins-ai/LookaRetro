@@ -1,6 +1,9 @@
 // LookaRetro — custom Pegasus Frontend theme.
 //
-// A gamepad-first, two-level launcher:
+// A gamepad-first, two-level launcher with a Nintendo pixel-art + "Lord of
+// the Rings" aesthetic (gold ring, Shire green, Mordor dark, scanlines) and
+// the LookaDev mark in the header.
+//
 //   HOME  -> horizontal carousel of systems (collections)
 //   GAMES -> box-art grid + detail panel for the selected system
 //
@@ -10,8 +13,8 @@
 //   L1 / R1        : prev / next system
 //
 // Uses only QtQuick + QtGraphicalEffects (no QtQuick.Controls), which are
-// bundled with Pegasus. The `api` and `global` objects and the `vpx()`
-// helper are provided by Pegasus itself.
+// bundled with Pegasus. The `api`, `global` objects and `vpx()` helper are
+// provided by Pegasus itself. Assets in ./assets are bundled with the theme.
 
 import QtQuick 2.0
 import QtGraphicalEffects 1.0
@@ -20,6 +23,8 @@ FocusScope {
     id: root
     anchors.fill: parent
     focus: true
+
+    FontLoader { id: pixelFont; source: "assets/PressStart2P.ttf" }
 
     // ---- state -----------------------------------------------------------
     property int platformIndex: 0
@@ -33,11 +38,16 @@ FocusScope {
     property real cardW: vpx(320)
     property real cardH: vpx(430)
 
+    // LOTR-inspired palette: gold (the ring), shire green, cyan, elvish, mordor, amber, silver, teal
     function accent(i) {
-        var palette = ["#00e5ff", "#ff2d95", "#7c4dff", "#00e676", "#ffab00", "#ff5252", "#18ffff", "#ff6d00"]
+        var palette = ["#e6c453", "#4a9c54", "#5fd0e8", "#8b6fd4", "#c05a4a", "#f6c177", "#9fb0bd", "#3ec6a8"]
         return palette[i % palette.length]
     }
     function currentAccent() { return accent(platformIndex) }
+
+    property color gold: "#e6c453"
+    property color green: "#4a9c54"
+    property color silver: "#9fb0bd"
 
     // ---- navigation ------------------------------------------------------
     function moveHome(dx) {
@@ -121,8 +131,8 @@ FocusScope {
 
     function hints() {
         if (view === "home")
-            return "\u25c0  \u25b6  navegar    \u2022    A  abrir    \u2022    L1/R1  sistema    \u2022    START  menu"
-        return "\u25c0  \u25b6  \u25b2  \u25bc  navegar    \u2022    A  jogar    \u2022    B  voltar    \u2022    L1/R1  sistema    \u2022    START  menu"
+            return "\u25c0 \u25b6 navegar    A abrir    L1/R1 sistema    START menu"
+        return "\u25c0 \u25b6 \u25b2 \u25bc navegar    A jogar    B voltar    L1/R1 sistema    START menu"
     }
 
     Component.onCompleted: {
@@ -158,7 +168,11 @@ FocusScope {
     // ---- background ------------------------------------------------------
     Rectangle {
         anchors.fill: parent
-        color: "#0a0d14"
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "#0d1117" }
+            GradientStop { position: 0.5; color: "#0a0e13" }
+            GradientStop { position: 1.0; color: "#080b0f" }
+        }
     }
 
     // Blurred screenshot/background of the selected game (games view only).
@@ -181,36 +195,62 @@ FocusScope {
         Rectangle {
             anchors.fill: parent
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#e60a0d14" }
-                GradientStop { position: 1.0; color: "#f20a0d14" }
+                GradientStop { position: 0.0; color: "#e60a0e13" }
+                GradientStop { position: 1.0; color: "#f20a0e13" }
             }
         }
     }
 
     // ---- header ----------------------------------------------------------
     Row {
-        anchors { top: parent.top; left: parent.left; margins: vpx(40) }
-        spacing: 0
-        Text {
-            text: "LOOKA"
-            font.family: global.fonts.condensedBold
-            font.pixelSize: vpx(30)
-            font.letterSpacing: 2
-            color: "#e7eaf2"
-        }
-        Text {
-            text: "RETRO"
-            font.family: global.fonts.condensedBold
-            font.pixelSize: vpx(30)
-            font.letterSpacing: 2
-            color: currentAccent()
-        }
-        Text {
-            text: view === "home" ? "  \u2014  sistemas" : ("  \u2014  " + (currentCollection ? currentCollection.name : ""))
-            font.family: global.fonts.condensed
-            font.pixelSize: vpx(20)
-            color: "#7f8797"
+        anchors { top: parent.top; left: parent.left; margins: vpx(34) }
+        spacing: vpx(18)
+
+        // The One Ring encircling the LookaDev mark
+        Item {
+            width: vpx(52); height: vpx(52)
             anchors.verticalCenter: parent.verticalCenter
+            Rectangle {
+                anchors.fill: parent
+                radius: width / 2
+                border.width: vpx(3)
+                border.color: root.gold
+                color: "#00000000"
+            }
+            Image {
+                anchors.centerIn: parent
+                width: vpx(40); height: vpx(40)
+                source: "assets/lookadev.png"
+                fillMode: Image.PreserveAspectFit
+                smooth: true
+            }
+        }
+
+        Column {
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: vpx(4)
+            Row {
+                spacing: 0
+                Text {
+                    text: "LOOKA"
+                    font.family: pixelFont.name
+                    font.pixelSize: vpx(18)
+                    color: root.gold
+                }
+                Text {
+                    text: "\u00b7RETRO"
+                    font.family: pixelFont.name
+                    font.pixelSize: vpx(18)
+                    color: root.green
+                }
+            }
+            Text {
+                text: "um console para a todos governar"
+                font.family: global.fonts.condensed
+                font.pixelSize: vpx(14)
+                font.letterSpacing: 1
+                color: root.silver
+            }
         }
     }
 
@@ -218,7 +258,7 @@ FocusScope {
     ListView {
         id: homeList
         anchors.fill: parent
-        anchors.topMargin: vpx(140)
+        anchors.topMargin: vpx(150)
         visible: view === "home"
 
         model: api.collections
@@ -246,57 +286,62 @@ FocusScope {
 
                 Rectangle {
                     anchors.fill: parent
-                    radius: vpx(20)
+                    radius: vpx(8)
                     gradient: Gradient {
                         GradientStop { position: 0.0; color: cardColor }
-                        GradientStop { position: 0.55; color: "#1b1f2e" }
-                        GradientStop { position: 1.0; color: "#12151f" }
+                        GradientStop { position: 0.45; color: "#171c26" }
+                        GradientStop { position: 1.0; color: "#0e1218" }
                     }
                     border.width: ListView.isCurrentItem ? vpx(3) : vpx(1)
-                    border.color: ListView.isCurrentItem ? cardColor : "#2a2f3d"
+                    border.color: ListView.isCurrentItem ? cardColor : "#2a303c"
                 }
+
+                // pixel-art "screws" in the corners
+                Rectangle { width: vpx(6); height: vpx(6); radius: vpx(1); color: "#3a4352"; anchors { top: parent.top; left: parent.left; margins: vpx(12) } }
+                Rectangle { width: vpx(6); height: vpx(6); radius: vpx(1); color: "#3a4352"; anchors { top: parent.top; right: parent.right; margins: vpx(12) } }
+                Rectangle { width: vpx(6); height: vpx(6); radius: vpx(1); color: "#3a4352"; anchors { bottom: parent.bottom; left: parent.left; margins: vpx(12) } }
+                Rectangle { width: vpx(6); height: vpx(6); radius: vpx(1); color: "#3a4352"; anchors { bottom: parent.bottom; right: parent.right; margins: vpx(12) } }
 
                 Rectangle {
                     visible: isOpenSource
                     anchors { top: parent.top; right: parent.right; topMargin: vpx(16); rightMargin: vpx(16) }
-                    width: badgeText.width + vpx(24)
-                    height: vpx(32)
-                    radius: vpx(16)
+                    width: badgeText.width + vpx(20)
+                    height: vpx(30)
+                    radius: vpx(4)
                     color: "#00e676"
                     Text {
                         id: badgeText
                         anchors.centerIn: parent
                         text: "\u2193 DOWNLOAD"
-                        font.family: global.fonts.condensedBold
-                        font.pixelSize: vpx(13)
-                        font.letterSpacing: 1
+                        font.family: pixelFont.name
+                        font.pixelSize: vpx(9)
                         color: "#06210f"
                     }
                 }
 
                 Text {
                     anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: vpx(150) }
-                    text: modelData.name.toUpperCase()
-                    font.family: global.fonts.condensedBold
-                    font.pixelSize: vpx(32)
+                    text: modelData.shortName.toUpperCase()
+                    font.family: pixelFont.name
+                    font.pixelSize: vpx(26)
                     color: "#f2f4f8"
                     horizontalAlignment: Text.AlignHCenter
-                    width: parent.width - vpx(24)
+                }
+                Text {
+                    anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: vpx(196) }
+                    text: modelData.name
+                    font.family: global.fonts.condensed
+                    font.pixelSize: vpx(17)
+                    color: "#aeb4c2"
+                    horizontalAlignment: Text.AlignHCenter
+                    width: parent.width - vpx(28)
                     wrapMode: Text.Wrap
                 }
                 Text {
-                    anchors { horizontalCenter: parent.horizontalCenter; top: parent.verticalCenter; topMargin: vpx(52) }
+                    anchors { horizontalCenter: parent.horizontalCenter; top: parent.verticalCenter; topMargin: vpx(70) }
                     text: modelData.games.count + (modelData.games.count === 1 ? " jogo" : " jogos")
                     font.family: global.fonts.sans
                     font.pixelSize: vpx(16)
-                    color: "#aeb4c2"
-                }
-                Text {
-                    anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: vpx(26) }
-                    text: modelData.shortName.toUpperCase()
-                    font.family: global.fonts.condensed
-                    font.pixelSize: vpx(14)
-                    font.letterSpacing: 3
                     color: cardColor
                 }
             }
@@ -330,10 +375,10 @@ FocusScope {
                 Rectangle {
                     id: boxFrame
                     anchors { fill: parent; bottomMargin: vpx(38) }
-                    radius: vpx(12)
+                    radius: vpx(6)
                     color: "#141824"
                     border.width: GridView.isCurrentItem ? vpx(3) : vpx(1)
-                    border.color: GridView.isCurrentItem ? root.currentAccent() : "#2a2f3d"
+                    border.color: GridView.isCurrentItem ? root.gold : "#2a303c"
 
                     Image {
                         anchors { fill: parent; margins: vpx(6) }
@@ -358,7 +403,7 @@ FocusScope {
                 Text {
                     anchors { left: parent.left; right: parent.right; top: boxFrame.bottom; topMargin: vpx(4) }
                     text: modelData.title
-                    color: GridView.isCurrentItem ? "#ffffff" : "#aeb4c2"
+                    color: GridView.isCurrentItem ? root.gold : "#aeb4c2"
                     font.family: global.fonts.condensed
                     font.pixelSize: vpx(16)
                     horizontalAlignment: Text.AlignHCenter
@@ -385,31 +430,32 @@ FocusScope {
 
             Rectangle {
                 width: vpx(56); height: vpx(6)
-                radius: vpx(3)
-                color: root.currentAccent()
+                radius: vpx(2)
+                color: root.gold
             }
 
             Text {
                 width: parent.width
                 text: currentGame ? currentGame.title : ""
-                font.family: global.fonts.condensedBold
-                font.pixelSize: vpx(42)
-                color: "#ffffff"
+                font.family: pixelFont.name
+                font.pixelSize: vpx(14)
+                lineHeight: 1.5
+                color: root.gold
                 wrapMode: Text.Wrap
             }
 
             Rectangle {
                 visible: currentCollection && currentCollection.shortName === "open-source"
-                width: dlBadgeText.width + vpx(24)
+                width: dlBadgeText.width + vpx(20)
                 height: vpx(30)
-                radius: vpx(15)
+                radius: vpx(4)
                 color: "#00e676"
                 Text {
                     id: dlBadgeText
                     anchors.centerIn: parent
                     text: "\u2193 download autom\u00e1tico"
-                    font.family: global.fonts.condensedBold
-                    font.pixelSize: vpx(13)
+                    font.family: pixelFont.name
+                    font.pixelSize: vpx(9)
                     color: "#06210f"
                 }
             }
@@ -419,16 +465,16 @@ FocusScope {
                 text: metaLine()
                 font.family: global.fonts.sans
                 font.pixelSize: vpx(16)
-                color: "#9aa1b2"
+                color: root.silver
             }
 
             Text {
                 width: parent.width
                 visible: currentGame && currentGame.rating > 0
                 text: currentGame ? "\u2605  " + Math.round(currentGame.rating * 100) + "%" : ""
-                font.family: global.fonts.condensedBold
-                font.pixelSize: vpx(18)
-                color: root.currentAccent()
+                font.family: pixelFont.name
+                font.pixelSize: vpx(12)
+                color: root.gold
             }
 
             Text {
@@ -449,7 +495,7 @@ FocusScope {
                 font.family: global.fonts.condensed
                 font.pixelSize: vpx(14)
                 font.letterSpacing: 2
-                color: "#7f8797"
+                color: root.green
             }
         }
     }
@@ -458,24 +504,32 @@ FocusScope {
     Rectangle {
         id: hintBar
         anchors { left: parent.left; right: parent.right; bottom: parent.bottom }
-        height: vpx(64)
-        color: "#0c0f16"
+        height: vpx(60)
+        color: "#0b0f15"
 
         Text {
             anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: vpx(48) }
             text: hints()
-            font.family: global.fonts.condensed
-            font.pixelSize: vpx(18)
-            color: "#8b92a3"
+            font.family: pixelFont.name
+            font.pixelSize: vpx(10)
+            color: root.silver
         }
 
         Text {
             anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: vpx(48) }
-            text: root.currentAccent()
-            font.family: global.fonts.condensedBold
-            font.pixelSize: vpx(18)
+            text: "\u25cf " + root.currentAccent()
+            font.family: pixelFont.name
+            font.pixelSize: vpx(10)
             color: root.currentAccent()
-            opacity: 0.9
         }
+    }
+
+    // ---- CRT scanline overlay -------------------------------------------
+    Image {
+        anchors.fill: parent
+        source: "assets/scanlines.png"
+        fillMode: Image.Tile
+        opacity: 0.55
+        visible: true
     }
 }

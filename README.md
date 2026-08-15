@@ -2,7 +2,7 @@
 
 Transforme um PC (ou Mac) em um **console retro** com interface bonita, quase zero input lag e persistência (continua rodando com a tampa fechada / sem hibernar).
 
-- **UI/UX:** [Pegasus Frontend](https://pegasus-frontend.org) (open source) com o tema customizado **LookaRetro** incluído.
+- **UI/UX:** [Pegasus Frontend](https://pegasus-frontend.org) (open source) com o tema customizado **LookaRetro** — visual retrô em **pixel-art (Nintendo) + Senhor dos Anéis**, scanlines de CRT e a marca **LookaDev**.
 - **Emuladores (todos open source):** RetroArch (SNES/GBC/GBA/N64/DS), DuckStation (PS1), Dolphin (Wii).
 - **Sistemas:** SNES · Game Boy Color · Game Boy Advance · Nintendo 64 · Nintendo DS · PlayStation 1 · Wii.
 - **Plataformas:** macOS (Apple Silicon) · Windows 10/11 · Linux (Flatpak).
