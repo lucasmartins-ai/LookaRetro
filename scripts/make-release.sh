@@ -21,13 +21,14 @@ mkdir -p "$STAGE"
 copy_common() {
     local dest="$1"
     mkdir -p "$dest/config/platform" "$dest/config/cores" "$dest/config/dolphin" \
-             "$dest/theme/LookaRetro" "$dest/docs"
+             "$dest/theme/LookaRetro" "$dest/docs" "$dest/catalog"
     cp "$REPO_DIR/README.md" "$REPO_DIR/LICENSE" "$dest/"
     cp "$REPO_DIR/config/retroarch.cfg" "$dest/config/"
     cp "$REPO_DIR/config/cores/"*.cfg "$dest/config/cores/"
     cp "$REPO_DIR/config/dolphin/GFX.ini" "$dest/config/dolphin/"
     cp "$REPO_DIR/theme/LookaRetro/theme.cfg" "$REPO_DIR/theme/LookaRetro/theme.qml" "$dest/theme/LookaRetro/"
     cp "$REPO_DIR/docs/"*.md "$dest/docs/"
+    cp "$REPO_DIR/catalog/open-source.tsv" "$dest/catalog/"
 }
 
 # --- macOS ----------------------------------------------------------------
@@ -35,7 +36,7 @@ M="$STAGE/macos/LookaRetro"
 copy_common "$M"
 mkdir -p "$M/lib" "$M/launchd"
 cp "$REPO_DIR/install-macos.sh" "$REPO_DIR/uninstall-macos.sh" "$M/"
-cp "$REPO_DIR/lib/launch.sh" "$REPO_DIR/lib/import-roms.sh" "$M/lib/"
+cp "$REPO_DIR/lib/launch.sh" "$REPO_DIR/lib/import-roms.sh" "$REPO_DIR/lib/fetch-and-play.sh" "$REPO_DIR/lib/make-open-source-catalog.sh" "$M/lib/"
 cp "$REPO_DIR/config/platform/macos.cfg" "$M/config/platform/"
 cp "$REPO_DIR/launchd/"*.plist "$M/launchd/"
 
@@ -44,7 +45,7 @@ L="$STAGE/linux/LookaRetro"
 copy_common "$L"
 mkdir -p "$L/lib" "$L/systemd"
 cp "$REPO_DIR/install-linux.sh" "$REPO_DIR/uninstall-linux.sh" "$L/"
-cp "$REPO_DIR/lib/launch.sh" "$REPO_DIR/lib/import-roms.sh" "$L/lib/"
+cp "$REPO_DIR/lib/launch.sh" "$REPO_DIR/lib/import-roms.sh" "$REPO_DIR/lib/fetch-and-play.sh" "$REPO_DIR/lib/make-open-source-catalog.sh" "$L/lib/"
 cp "$REPO_DIR/config/platform/linux.cfg" "$L/config/platform/"
 cp "$REPO_DIR/systemd/"*.service "$REPO_DIR/systemd/"*.desktop "$REPO_DIR/systemd/"*.conf "$L/systemd/"
 
@@ -53,7 +54,7 @@ W="$STAGE/windows/LookaRetro"
 copy_common "$W"
 mkdir -p "$W/lib"
 cp "$REPO_DIR/install-windows.ps1" "$REPO_DIR/uninstall-windows.ps1" "$W/"
-cp "$REPO_DIR/lib/import-roms.ps1" "$W/lib/"
+cp "$REPO_DIR/lib/import-roms.ps1" "$REPO_DIR/lib/fetch-and-play.ps1" "$REPO_DIR/lib/make-open-source-catalog.ps1" "$W/lib/"
 cp "$REPO_DIR/config/platform/windows.cfg" "$W/config/platform/"
 
 # --- theme only -----------------------------------------------------------

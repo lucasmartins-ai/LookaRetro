@@ -164,7 +164,7 @@ done
 # 4. Deploy console root
 # ---------------------------------------------------------------------------
 step "Deploying configs, scripts and theme to $RETRO_HOME"
-for d in roms scripts config/cores config/dolphin; do
+for d in roms scripts config/cores config/dolphin catalog; do
     run mkdir -p "$RETRO_HOME/$d"
 done
 for s in snes gbc gba n64 nds psx wii; do
@@ -173,7 +173,11 @@ done
 
 run cp -f "$REPO_DIR/lib/launch.sh"       "$RETRO_HOME/scripts/launch.sh"
 run cp -f "$REPO_DIR/lib/import-roms.sh"  "$RETRO_HOME/scripts/import-roms.sh"
-run chmod +x "$RETRO_HOME/scripts/launch.sh" "$RETRO_HOME/scripts/import-roms.sh"
+run cp -f "$REPO_DIR/lib/fetch-and-play.sh" "$RETRO_HOME/scripts/fetch-and-play.sh"
+run cp -f "$REPO_DIR/lib/make-open-source-catalog.sh" "$RETRO_HOME/scripts/make-open-source-catalog.sh"
+run chmod +x "$RETRO_HOME/scripts/launch.sh" "$RETRO_HOME/scripts/import-roms.sh" \
+             "$RETRO_HOME/scripts/fetch-and-play.sh" "$RETRO_HOME/scripts/make-open-source-catalog.sh"
+run cp -f "$REPO_DIR/catalog/open-source.tsv" "$RETRO_HOME/catalog/open-source.tsv"
 
 run cp -f "$REPO_DIR/config/retroarch.cfg" "$RETRO_HOME/config/retroarch.cfg"
 run cp -f "$REPO_DIR/config/cores/"*.cfg    "$RETRO_HOME/config/cores/"
@@ -208,6 +212,7 @@ if [[ "$DRY_RUN" -eq 0 ]]; then
         for s in snes gbc gba n64 nds psx wii; do
             echo "$RETRO_HOME/roms/$s"
         done
+        echo "$RETRO_HOME/roms-open-source"
     } > "$PEGASUS_CFG_DIR/game_dirs.txt"
 else
     info "Would write $PEGASUS_CFG_DIR/game_dirs.txt"
@@ -255,6 +260,12 @@ fi
 # ---------------------------------------------------------------------------
 step "Scanning for ROMs"
 run bash "$RETRO_HOME/scripts/import-roms.sh"
+
+# ---------------------------------------------------------------------------
+# 7b. Open Source catalog (download-on-play homebrew collection)
+# ---------------------------------------------------------------------------
+step "Building the Open Source catalog"
+run bash "$RETRO_HOME/scripts/make-open-source-catalog.sh"
 
 # ---------------------------------------------------------------------------
 # 8. Optional system-wide "console mode"

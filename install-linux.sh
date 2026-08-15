@@ -164,12 +164,16 @@ fi
 # 5. Deploy console root + theme + Pegasus config
 # ---------------------------------------------------------------------------
 step "Deploying scripts, theme and Pegasus config to $RETRO_HOME"
-for d in roms scripts config; do run mkdir -p "$RETRO_HOME/$d"; done
+for d in roms scripts config catalog; do run mkdir -p "$RETRO_HOME/$d"; done
 for s in snes gbc gba n64 nds psx wii; do run mkdir -p "$RETRO_HOME/roms/$s"; done
 
 run cp -f "$REPO_DIR/lib/launch.sh"      "$RETRO_HOME/scripts/launch.sh"
 run cp -f "$REPO_DIR/lib/import-roms.sh" "$RETRO_HOME/scripts/import-roms.sh"
-run chmod +x "$RETRO_HOME/scripts/launch.sh" "$RETRO_HOME/scripts/import-roms.sh"
+run cp -f "$REPO_DIR/lib/fetch-and-play.sh" "$RETRO_HOME/scripts/fetch-and-play.sh"
+run cp -f "$REPO_DIR/lib/make-open-source-catalog.sh" "$RETRO_HOME/scripts/make-open-source-catalog.sh"
+run chmod +x "$RETRO_HOME/scripts/launch.sh" "$RETRO_HOME/scripts/import-roms.sh" \
+             "$RETRO_HOME/scripts/fetch-and-play.sh" "$RETRO_HOME/scripts/make-open-source-catalog.sh"
+run cp -f "$REPO_DIR/catalog/open-source.tsv" "$RETRO_HOME/catalog/open-source.tsv"
 
 PEG_CFG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/pegasus-frontend"
 run mkdir -p "$PEG_CFG_DIR/themes/LookaRetro"
@@ -186,6 +190,7 @@ EOF
         for s in snes gbc gba n64 nds psx wii; do
             echo "$RETRO_HOME/roms/$s"
         done
+        echo "$RETRO_HOME/roms-open-source"
     } > "$PEG_CFG_DIR/game_dirs.txt"
 else
     info "Would write $PEG_CFG_DIR/settings.txt + game_dirs.txt"
@@ -196,6 +201,9 @@ fi
 # ---------------------------------------------------------------------------
 step "Scanning for ROMs"
 run bash "$RETRO_HOME/scripts/import-roms.sh"
+
+step "Building the Open Source catalog"
+run bash "$RETRO_HOME/scripts/make-open-source-catalog.sh"
 
 # ---------------------------------------------------------------------------
 # 7. Persistence: never-sleep (systemd-inhibit) + auto-boot (XDG autostart)

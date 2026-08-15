@@ -8,6 +8,40 @@ Para jogar esses títulos legalmente, use **cópias que você mesmo extraiu** do
 
 > Resumo: o LookaRetro cuida de **toda a parte técnica** (emuladores, interface, configs). As ROMs comerciais são responsabilidade sua, a partir de mídia própria.
 
+## Catálogo Open Source embutido (download automático)
+
+O instalador cria uma coleção **"Open Source"** no Pegasus com jogos homebrew/open source. Ao clicar em **jogar**, a ROM é **baixada automaticamente da fonte oficial na primeira execução** (depois fica em cache e abre direto).
+
+**Como funciona:**
+- Cada jogo começa como um *stub* (arquivo de 0 bytes) em `roms-open-source/`.
+- O `launch:` chama `fetch-and-play.sh <sistema> <arquivo> <url>`, que baixa a ROM se ela ainda for stub e então abre o emulador.
+- O catálogo é definido em `catalog/open-source.tsv` (uma linha por jogo: `sistema	arquivo	título	autor	licença	url`).
+
+**Jogos incluídos** (todos de releases oficiais no GitHub):
+
+| Jogo | Sistema | Licença |
+|---|---|---|
+| Adjustris | Game Boy | CC0-1.0 |
+| uCity | Game Boy Color | GPL-3.0 |
+| Celeste Classic | Game Boy Advance | MIT |
+| Space Rescue Squad (Demo) | SNES | open source (demo do autor) |
+| Moonfish (Demo) | Nintendo 64 | open source (demo do autor) |
+
+> ⚠️ **N64:** toda ROM de N64 embute um bootloader não-livre da Nintendo (IPL3), então nenhum homebrew de N64 é 100% livre — ver a [nota da FSF](https://directory.fsf.org/wiki/Collection:Game_ROM_images). O demo Moonfish é incluído por conveniência.
+
+**Adicionar mais jogos:** acrescente uma linha em `catalog/open-source.tsv` e re-rogue:
+
+```bash
+# macOS / Linux
+~/Retro/scripts/make-open-source-catalog.sh
+```
+```powershell
+# Windows
+powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\Retro\scripts\make-open-source-catalog.ps1"
+```
+
+Depois recarregue o Pegasus (F5). A URL pode ser um ROM direto (`.gb`/`.sfc`/`.z64`…) ou um `.zip` (extraído automaticamente).
+
 ## Jogos genuinamente open source / homebrew
 
 Estes você pode baixar e usar à vontade (licenças livres). Ótimos para testar o setup:

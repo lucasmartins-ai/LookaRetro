@@ -101,11 +101,15 @@ foreach ($core in $CORES) {
 # ---------------------------------------------------------------------------
 Step 'Deploying configs, importer and theme'
 New-Item -ItemType Directory -Force -Path $SCRIPTS_DIR | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $RETRO_HOME 'catalog') | Out-Null
 foreach ($s in 'snes','gbc','gba','n64','nds','psx','wii') {
     New-Item -ItemType Directory -Force -Path (Join-Path $RETRO_HOME "roms\$s") | Out-Null
 }
 
 Copy-Item (Join-Path $REPO_DIR 'lib\import-roms.ps1') (Join-Path $SCRIPTS_DIR 'import-roms.ps1') -Force
+Copy-Item (Join-Path $REPO_DIR 'lib\fetch-and-play.ps1') (Join-Path $SCRIPTS_DIR 'fetch-and-play.ps1') -Force
+Copy-Item (Join-Path $REPO_DIR 'lib\make-open-source-catalog.ps1') (Join-Path $SCRIPTS_DIR 'make-open-source-catalog.ps1') -Force
+Copy-Item (Join-Path $REPO_DIR 'catalog\open-source.tsv') (Join-Path $RETRO_HOME 'catalog\open-source.tsv') -Force
 
 # RetroArch config = shared + windows driver snippet
 New-Item -ItemType Directory -Force -Path $RA_DIR | Out-Null
@@ -156,6 +160,7 @@ $gameDirs = @('# LookaRetro game directories')
 foreach ($s in 'snes','gbc','gba','n64','nds','psx','wii') {
     $gameDirs += (Join-Path $RETRO_HOME "roms\$s")
 }
+$gameDirs += (Join-Path $RETRO_HOME 'roms-open-source')
 Set-Content -Path (Join-Path $PEG_DIR 'game_dirs.txt') -Value $gameDirs -Encoding UTF8
 
 # Resolved emulator paths (used by import-roms.ps1)
@@ -176,6 +181,9 @@ Set-Content -Path (Join-Path $SCRIPTS_DIR 'emulators.ps1') -Value $emuLines -Enc
 # ---------------------------------------------------------------------------
 Step 'Scanning for ROMs'
 & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $SCRIPTS_DIR 'import-roms.ps1')
+
+Step 'Building the Open Source catalog'
+& powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $SCRIPTS_DIR 'make-open-source-catalog.ps1')
 
 # ---------------------------------------------------------------------------
 Step 'Adding Pegasus to startup'

@@ -1,0 +1,23 @@
+# LookaRetro — open-source / homebrew game catalog.
+#
+# One game per line:  system<TAB>filename<TAB>title<TAB>developer<TAB>license<TAB>url
+#   system  : launcher system key (gbc gba snes n64 nds psx wii)
+#   filename: local ROM file name (created as a 0-byte stub until first play)
+#   url     : direct ROM URL, or a .zip (auto-extracted on first play)
+#
+# All entries below are legally redistributable homebrew / open-source games,
+# downloaded from the authors' official GitHub releases. See docs/ROMS.md.
+#
+# NOTE (N64): every N64 ROM embeds a non-free Nintendo bootloader ("IPL3"),
+# so no N64 homebrew ROM is 100% free software — see the FSF directory entry
+# for details. The Moonfish demo is included for convenience (author-released).
+#
+# Add your own homebrew by appending a line and re-running:
+#   make-open-source-catalog.sh (or .ps1 on Windows)
+
+system	filename	title	developer	license	url
+gbc	adjustris.gb	Adjustris	tbsp	CC0-1.0	https://github.com/tbsp/Adjustris/releases/download/v1.1/adjustris.gb
+gbc	ucity.gbc	uCity	AntonioND	GPL-3.0	https://github.com/AntonioND/ucity/releases/download/v1.3/ucity.gbc
+gba	celeste.gba	Celeste Classic	JeffRuLz	MIT	https://github.com/JeffRuLz/Celeste-Classic-GBA/releases/download/v1.2/Celeste.Classic.v1.2.Homebrew.gba
+snes	space-rescue-squad.sfc	Space Rescue Squad (Demo)	undisbeliever	open source (author demo)	https://github.com/undisbeliever/space-rescue-squad/releases/download/game-jam-v1.1/Space.Rescue.Squad.Demo.v1.1.zip
+n64	moonfish.z64	Moonfish (Demo)	Team GTvLC	open source (author demo)	https://github.com/hadahlia/moonfish/releases/download/v2/moonfish.z64

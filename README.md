@@ -6,6 +6,7 @@ Transforme um PC (ou Mac) em um **console retro** com interface bonita, quase ze
 - **Emuladores (todos open source):** RetroArch (SNES/GBC/GBA/N64/DS), DuckStation (PS1), Dolphin (Wii).
 - **Sistemas:** SNES · Game Boy Color · Game Boy Advance · Nintendo 64 · Nintendo DS · PlayStation 1 · Wii.
 - **Plataformas:** macOS (Apple Silicon) · Windows 10/11 · Linux (Flatpak).
+- **Catálogo Open Source:** coleção de jogos homebrew com **download automático** na primeira execução (Adjustris, uCity, Celeste Classic, demos SNES/N64…) — veja [docs/ROMS.md](docs/ROMS.md).
 
 > **Nota sobre ROMs:** jogos comerciais (Zelda, Pokémon, Tekken, Gran Turismo etc.) **não são open source** e são protegidos por copyright. Este projeto cuida de **toda a parte técnica** (emuladores, interface, configs) — as ROMs desses títulos devem vir de **cópias que você mesmo extraiu** dos seus cartuchos/discos. Existem alternativas genuinamente open source (homebrew) listadas em [docs/ROMS.md](docs/ROMS.md).
 
