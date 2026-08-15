@@ -398,6 +398,22 @@ FocusScope {
                 wrapMode: Text.Wrap
             }
 
+            Rectangle {
+                visible: currentCollection && currentCollection.shortName === "open-source"
+                width: dlBadgeText.width + vpx(24)
+                height: vpx(30)
+                radius: vpx(15)
+                color: "#00e676"
+                Text {
+                    id: dlBadgeText
+                    anchors.centerIn: parent
+                    text: "\u2193 download autom\u00e1tico"
+                    font.family: global.fonts.condensedBold
+                    font.pixelSize: vpx(13)
+                    color: "#06210f"
+                }
+            }
+
             Text {
                 width: parent.width
                 text: metaLine()

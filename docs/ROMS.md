@@ -29,6 +29,11 @@ O instalador cria uma coleção **"Open Source"** no Pegasus com jogos homebrew/
 | Asteroids | SNES | MIT |
 | Pong | SNES | MIT |
 | Memory Game | SNES | MIT |
+| Bat Cave | SNES | MIT |
+| Elevator Madness DX | SNES | MIT |
+| First Person Tetromones | SNES | MIT |
+| Horizontal Shooter | SNES | MIT |
+| Falling Tower | SNES | MIT |
 | Moonfish (Demo) | Nintendo 64 | open source (demo do autor) |
 
 > ⚠️ **N64:** toda ROM de N64 embute um bootloader não-livre da Nintendo (IPL3), então nenhum homebrew de N64 é 100% livre — ver a [nota da FSF](https://directory.fsf.org/wiki/Collection:Game_ROM_images). O demo Moonfish é incluído por conveniência.
