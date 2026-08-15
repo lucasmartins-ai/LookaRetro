@@ -1,0 +1,11 @@
+[Unit]
+Description=LookaRetro — keep the machine awake (console mode)
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/systemd-inhibit --what=sleep:idle --who=LookaRetro --why=Console mode --mode=block sleep infinity
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

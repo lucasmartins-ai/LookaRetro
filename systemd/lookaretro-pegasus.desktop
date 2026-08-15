@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=LookaRetro (Pegasus)
+Comment=Retro console frontend
+Exec=@PEG_DIR@/pegasus-fe
+Icon=applications-games
+Terminal=false
+Categories=Game;Emulator;
+X-GNOME-Autostart-enabled=true

@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Reasonix / agent metadata — never publish
+.reasonix/
+
+# Temporary downloads / scratch
+*.tmp
+downloads/
+
+# Release bundles built by scripts/make-release.sh
+dist/
+
+# Deployed console root (built by the installers) — keep ROMs out of git
+retro-home/
