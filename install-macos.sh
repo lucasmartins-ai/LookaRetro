@@ -177,7 +177,7 @@ done
 # 4. Deploy console root
 # ---------------------------------------------------------------------------
 step "Deploying configs, scripts and theme to $RETRO_HOME"
-for d in roms scripts config/cores config/dolphin catalog; do
+for d in roms scripts config/cores config/dolphin config/remaps catalog; do
     run mkdir -p "$RETRO_HOME/$d"
 done
 for s in snes gbc gba n64 nds psx wii; do
@@ -199,7 +199,9 @@ run cp -f "$REPO_DIR/catalog/open-source.tsv" "$RETRO_HOME/catalog/open-source.t
 
 run cp -f "$REPO_DIR/config/retroarch.cfg" "$RETRO_HOME/config/retroarch.cfg"
 run cp -f "$REPO_DIR/config/cores/"*.cfg    "$RETRO_HOME/config/cores/"
-run cp -f "$REPO_DIR/config/dolphin/GFX.ini" "$RETRO_HOME/config/dolphin/GFX.ini"
+run cp -f "$REPO_DIR/config/cores/"*.opt    "$RETRO_HOME/config/cores/"
+run cp -f "$REPO_DIR/config/dolphin/"*.ini "$RETRO_HOME/config/dolphin/"
+run cp -R "$REPO_DIR/config/remaps/." "$RETRO_HOME/config/remaps/"
 
 # Pegasus theme
 PEGASUS_CFG_DIR="$HOME/Library/Preferences/pegasus-frontend"
@@ -279,6 +281,16 @@ if [[ "$DRY_RUN" -eq 0 ]]; then
         cp -f "$REPO_DIR/config/cores/$optname" "$RA_CFG_DIR/config/$corename/$optname"
     }
     install_core_options "Mupen64Plus-Next" "Mupen64Plus-Next.opt"
+
+    # Remaps per-core (layout padronizado confirmar=A / cancelar=B no pad
+    # Xbox) -> the active RetroArch remaps dir; RetroArch auto-loads them
+    # when a game is opened with the matching core.
+    for src in "$REPO_DIR/config/remaps/"*/; do
+        corename="$(basename "$src")"
+        [[ -f "$src/$corename.rmp" ]] || continue
+        mkdir -p "$RA_CFG_DIR/config/remaps/$corename"
+        cp -f "$src/$corename.rmp" "$RA_CFG_DIR/config/remaps/$corename/$corename.rmp"
+    done
 
     # Dolphin: minimal GFX.ini with fullscreen enabled
     DOLPHIN_CFG_DIR="$HOME/Library/Application Support/Dolphin/Config"

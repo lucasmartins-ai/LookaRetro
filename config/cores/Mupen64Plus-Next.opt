@@ -11,3 +11,10 @@
 # GPU RDP is what keeps N64 playable here.
 mupen64plus-rdp-plugin = "parallel"
 mupen64plus-rsp-plugin = "parallel"
+
+# --- Controle (N64 em pad Xbox) -----------------------------------------
+# Mantém o mapeamento padrão que joga os C-buttons (amarelos) no ANALÓGICO
+# DIREITO do pad — câmera/look sem largar o movimento. alt-map="False" é o
+# padrão do core; deixamos explícito aqui para o setup reproduzir.
+# (O layout fino de A/B/C está no remap Mupen64Plus-Next.rmp.)
+mupen64plus-alt-map = "False"

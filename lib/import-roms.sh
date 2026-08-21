@@ -21,9 +21,20 @@ clean_title() {
     # strip extension(s) and multi-disc markers
     name="${name%.*}"            # .iso / .wbfs / ...
     name="${name%.*}"            # .nkit
+    # handle contraction underscores
+    name="$(printf '%s' "$name" | sed -E "s/_s\b/'s/g; s/_re\b/'re/g; s/_t\b/'t/g")"
+    # strip dump/bracket tags: [!], [b], etc.
+    name="$(printf '%s' "$name" | sed -E 's/\[[^]]*\]//g')"
     # strip common region tags
-    name="$(printf '%s' "$name" | sed -E 's/[[:space:]]*\((USA|Europe|Japan|Brazil|World|Japan, USA|USA, Europe|En,Fr,De|En,Ja|Rev [0-9A-Za-z]|v[0-9.]+)\)//g')"
-    name="$(printf '%s' "$name" | sed -E 's/[[:space:]]*\[(USA|Europe|Japan|Brazil|World)\][[:space:]]*//g')"
+    name="$(printf '%s' "$name" | sed -E 's/\((USA|Europe|Japan|Brazil|World|En,Fr,De|En,Ja|En,Fr|Rev [0-9A-Za-z]+|v[0-9.]+|U|E|J|UE|JU|M[0-9]+|Xenophobia|frieNDS|SweeTnDs|EP[0-9.]+|GamesMaster Special Edition|Japan, USA|USA, Europe)\)//gi')"
+    name="$(printf '%s' "$name" | sed -E 's/\(!\)//g')"
+    # trim trailing/leading whitespace before checking suffix
+    name="$(printf '%s' "$name" | sed -E 's/[[:space:]]+$//; s/^[[:space:]]+//')"
+    # handle trailing ", The" -> "The ..."
+    if [[ "$name" =~ (,[[:space:]_]*[Tt]he)$ ]]; then
+        name="$(printf '%s' "$name" | sed -E 's/,[[:space:]_]*[Tt]he$//')"
+        name="The $name"
+    fi
     # separators to spaces
     name="$(printf '%s' "$name" | sed -E 's/[_-]+/ /g')"
     # collapse spaces

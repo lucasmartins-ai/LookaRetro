@@ -38,6 +38,8 @@ cp -f "$REPO/lib/launch.sh" "$REPO/lib/import-roms.sh" \
       "$R/scripts/"
 chmod +x "$R/scripts/"*.sh
 cp -f "$REPO/catalog/open-source.tsv" "$R/catalog/"
+mkdir -p "$R/config"
+cp -R "$REPO/config/." "$R/config/"
 
 rm -rf "$PEG/themes/LookaRetro"
 mkdir -p "$PEG/themes/LookaRetro"

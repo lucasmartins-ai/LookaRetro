@@ -1,0 +1,38 @@
+# LookaRetro — Core Remap: Mupen64Plus-Next (Nintendo 64)
+# Layout otimizado para controle de Xbox (P1 e P2)
+# Padrão: A = Confirmar/Aceitar/Pulo (N64 A), B = Cancelar/Ataque (N64 B), X = N64 B, Y = N64 C-Down
+# LT = N64 Z Trigger, LB = N64 L, RB/RT = N64 R, Analógico Direito = C-Buttons
+
+input_libretro_device_p1 = "1"
+input_player1_analog_dpad_mode = "0"
+input_player1_btn_b = "0"
+input_player1_btn_a = "1"
+input_player1_btn_y = "1"
+input_player1_btn_x = "9"
+input_player1_btn_l = "10"
+input_player1_btn_r = "11"
+input_player1_btn_l2 = "12"
+input_player1_btn_r2 = "11"
+input_player1_btn_select = "2"
+input_player1_btn_start = "3"
+input_player1_btn_up = "4"
+input_player1_btn_down = "5"
+input_player1_btn_left = "6"
+input_player1_btn_right = "7"
+
+input_libretro_device_p2 = "1"
+input_player2_analog_dpad_mode = "0"
+input_player2_btn_b = "0"
+input_player2_btn_a = "1"
+input_player2_btn_y = "1"
+input_player2_btn_x = "9"
+input_player2_btn_l = "10"
+input_player2_btn_r = "11"
+input_player2_btn_l2 = "12"
+input_player2_btn_r2 = "11"
+input_player2_btn_select = "2"
+input_player2_btn_start = "3"
+input_player2_btn_up = "4"
+input_player2_btn_down = "5"
+input_player2_btn_left = "6"
+input_player2_btn_right = "7"
