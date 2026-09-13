@@ -4,7 +4,7 @@
 # Usage:
 #   launch.sh <system> <rom-path>
 #
-# <system> is one of: snes gbc gba n64 nds psx wii 3ds switch
+# <system> is one of: snes gbc gba n64 nds psx wii 3ds switch psvita
 #
 # Called by Pegasus Frontend from each system's metadata.pegasus.txt via the
 # `launch:` line. Deployed to $RETRO_HOME/scripts/launch.sh by the installer.
@@ -29,6 +29,7 @@ if [[ "$OS" == "Darwin" ]]; then
     DOLPHIN=( "/Applications/Dolphin.app/Contents/MacOS/Dolphin" )
     AZAHAR=( "/Applications/Azahar.app/Contents/MacOS/azahar" )
     RYUJINX=( "/Applications/Ryujinx.app/Contents/MacOS/Ryujinx" )
+    VITA3K=( "/Applications/Vita3K.app/Contents/MacOS/Vita3K" )
     CORES_DIR="${CORES_DIR:-$HOME/Library/Application Support/RetroArch/cores}"
     CORE_EXT="dylib"
     # Pegasus Frontend has no arm64 macOS build (it runs x86_64 under Rosetta),
@@ -44,6 +45,7 @@ if [[ "$OS" == "Darwin" ]]; then
         DOLPHIN=( /usr/bin/arch -arm64 "${DOLPHIN[0]}" )
         AZAHAR=( /usr/bin/arch -arm64 "${AZAHAR[0]}" )
         RYUJINX=( /usr/bin/arch -arm64 "${RYUJINX[0]}" )
+        VITA3K=( /usr/bin/arch -arm64 "${VITA3K[0]}" )
     fi
 elif [[ "$OS" == "Linux" ]]; then
     # Emulators are installed as Flatpaks (see install-linux.sh).
@@ -52,6 +54,7 @@ elif [[ "$OS" == "Linux" ]]; then
     DOLPHIN=( flatpak run org.DolphinEmu.dolphin-emu )
     AZAHAR=( flatpak run org.azahar_emu.azahar )
     RYUJINX=( flatpak run org.ryujinx.Ryujinx )
+    VITA3K=( flatpak run org.vita3k.Vita3K )
     CORES_DIR="${CORES_DIR:-$HOME/.var/app/org.libretro.RetroArch/config/retroarch/cores}"
     CORE_EXT="so"
 else
@@ -77,9 +80,22 @@ case "$SYSTEM" in
     switch)
         exec "${RYUJINX[@]}" --fullscreen "$ROM"
         ;;
+    psvita|vita)
+        # ROM can be a .vita stub containing the Title ID, or named <TitleID>.vita,
+        # or a direct path to an installed directory/eboot.
+        tid=""
+        if [[ -f "$ROM" ]]; then
+            tid="$(head -n 1 "$ROM" 2>/dev/null | tr -d '\r\n[:space:]')"
+            [[ -n "$tid" ]] || tid="$(basename "$ROM" .vita)"
+        else
+            tid="$(basename "$ROM")"
+            tid="${tid%.*}"
+        fi
+        exec "${VITA3K[@]}" -r "$tid"
+        ;;
     *)
         echo "Unknown system: $SYSTEM" >&2
-        echo "Valid systems: snes gbc gba n64 nds psx wii 3ds switch" >&2
+        echo "Valid systems: snes gbc gba n64 nds psx wii 3ds switch psvita" >&2
         exit 2
         ;;
 esac

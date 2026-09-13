@@ -49,7 +49,7 @@ while IFS=$'\t' read -r system filename title developer license url; do
         printf 'developer: %s\n' "$developer"
         printf 'launch: "%s" %s "{file.path}" "%s"\n' "$FETCHER" "$system" "$url"
         printf 'genre: Homebrew (open source)\n'
-        printf '\nLicense: %s. Download automático da fonte oficial na primeira execução.\n\n' "$license"
+        printf 'summary: Licença %s. Download automático da fonte oficial na primeira execução.\n\n' "$license"
     } >> "$META"
 
     count=$((count + 1))

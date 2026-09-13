@@ -2,9 +2,9 @@
 
 Transforme um PC (ou Mac) em um **console retro** com interface bonita, quase zero input lag e persistência (continua rodando com a tampa fechada / sem hibernar).
 
-- **UI/UX:** [Pegasus Frontend](https://pegasus-frontend.org) (open source) com o tema customizado **LookaRetro** — visual retrô em **pixel-art (Nintendo) + Senhor dos Anéis**, scanlines de CRT e a marca **LookaDev**.
-- **Emuladores (todos open source):** RetroArch (SNES/GBC/GBA/N64/DS), DuckStation (PS1), Dolphin (Wii), Azahar (3DS), Ryujinx (Switch).
-- **Sistemas:** SNES · Game Boy Color · Game Boy Advance · Nintendo 64 · Nintendo DS · PlayStation 1 · Wii · Nintendo 3DS · Nintendo Switch.
+- **UI/UX:** [Pegasus Frontend](https://pegasus-frontend.org) (open source) com o tema customizado **LookaRetro** — visual retrô em **pixel-art (Nintendo) + Senhor dos Anéis**, centro de seleção aprimorado com halo do Um Anel, modal de saída segura, scanlines de CRT e a marca **LookaDev**.
+- **Emuladores (todos open source):** RetroArch (SNES/GBC/GBA/N64/DS), DuckStation (PS1), Dolphin (Wii), Azahar (3DS), Ryujinx (Switch), Vita3K (PS Vita).
+- **Sistemas:** SNES · Game Boy Color · Game Boy Advance · Nintendo 64 · Nintendo DS · PlayStation 1 · Wii · Nintendo 3DS · Nintendo Switch · PlayStation Vita.
 - **Plataformas:** macOS (Apple Silicon) · Windows 10/11 · Linux (Flatpak).
 - **Catálogo Open Source:** coleção de jogos homebrew com **download automático** na primeira execução (Adjustris, uCity, Celeste Classic, demos SNES/N64…) — veja [docs/ROMS.md](docs/ROMS.md).
 
@@ -35,6 +35,7 @@ Guia detalhado por plataforma: [docs/WINDOWS.md](docs/WINDOWS.md) · [docs/LINUX
 | Wii | Dolphin (nativo) | Dolphin (winget) | Dolphin (`org.DolphinEmu.dolphin-emu`) |
 | Nintendo 3DS | Azahar (nativo arm64) | Azahar / Lime3DS | Azahar (`azahar.AppImage`) |
 | Nintendo Switch | Ryujinx (universal arm64) | Ryujinx | Ryujinx |
+| PlayStation Vita | Vita3K (nativo arm64 / Vulkan 1080p) | Vita3K | Vita3K (`org.vita3k.Vita3K`) |
 | UI | Pegasus (x86_64/Rosetta 2) | Pegasus (`pegasus-fe.exe`) | Pegasus (x11-static) |
 
 Os cores do RetroArch (Snes9x, Gambatte, mGBA, mupen64plus-next, melonDS) são baixados direto do [buildbot.libretro.com](https://buildbot.libretro.com) — open source, sem bins fechados.
@@ -96,6 +97,7 @@ Detalhes em [docs/LINUX.md](docs/LINUX.md).
 | Wii | `roms/wii/` | `.wbfs` `.rvz` `.iso` `.ciso` |
 | Nintendo 3DS | `roms/3ds/` | `.3ds` `.cci` `.cxi` `.app` |
 | Nintendo Switch | `roms/switch/` | `.nsp` `.xci` `.nsz` |
+| PlayStation Vita | `roms/psvita/` | `.vita` `.vpk` `.zip` |
 
 A pasta raiz é `~/Retro` (macOS/Linux) ou `%USERPROFILE%\Retro` (Windows), configurável via `RETRO_HOME`.
 
@@ -209,9 +211,10 @@ LookaRetro/
 
 ## FAQ
 
-**Por que o Pegasus no macOS é x86_64?** O build oficial para macOS é x86_64 (roda via Rosetta 2, instalado automaticamente). É só a interface — o `launch.sh` força `arch -arm64` nos emuladores (RetroArch/DuckStation/Dolphin), então eles rodam **nativos em arm64** e carregam os cores arm64 mesmo sendo iniciados pelo Pegasus.
+**Por que o Pegasus no macOS é x86_64?** O build oficial para macOS é x86_64 (roda via Rosetta 2, instalado automaticamente). É só a interface — o `launch.sh` força `arch -arm64` nos emuladores (RetroArch/DuckStation/Dolphin/Azahar/Ryujinx/Vita3K), então eles rodam **nativos em arm64** e carregam os cores arm64 mesmo sendo iniciados pelo Pegasus.
+O encerramento do Pegasus conta com modal de saída segura no tema v1.3 (executando `Qt.quit()`) e flags `--disable-menu-shutdown`, `--disable-menu-reboot`, garantindo que o Mac nunca seja desligado por engano.
 
-**Digimon World Next Order / Re:Digitize?** São de PS4/PS Vita e PSP/3DS — fora dos sistemas suportados. Posso estender com PPSSPP (PSP) ou Citra (3DS) depois.
+**Digimon World Next 0rder e Re:Digitize Decode?** Totalmente suportados! O **Digimon World Re:Digitize Decode** roda no emulador nativo **Azahar** (3DS) com resolução 4x (1080p), e o **Digimon World: Next 0rder** roda no **Vita3K** (PS Vita) via Vulkan/MoltenVK nativo no Apple Silicon com renderização em 1080p, DLCs e tradução em inglês integradas.
 
 **O Mac ainda dorme com a tampa fechada?** Confira `pmset -g live | grep SleepDisabled` (deve ser `1`). Conflito com apps como Amphetamine/AlDente é possível.
 
@@ -225,4 +228,4 @@ LookaRetro/
 
 ## Licença
 
-Código (scripts, tema, configs): **MIT** — veja [LICENSE](LICENSE). Os emuladores (RetroArch, DuckStation, Dolphin, Pegasus) são projetos independentes com suas próprias licenças (GPL etc.), baixados na instalação — **não** são redistribuídos aqui.
+Código (scripts, tema, configs): **MIT** — veja [LICENSE](LICENSE). Os emuladores (RetroArch, DuckStation, Dolphin, Pegasus, Azahar, Ryujinx, Vita3K) são projetos independentes com suas próprias licenças (GPL etc.), baixados na instalação — **não** são redistribuídos aqui.

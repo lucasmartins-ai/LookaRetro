@@ -44,11 +44,16 @@ cp -R "$REPO/config/." "$R/config/"
 rm -rf "$PEG/themes/LookaRetro"
 mkdir -p "$PEG/themes/LookaRetro"
 cp -R "$REPO/theme/LookaRetro/." "$PEG/themes/LookaRetro/"
-info "tema v1.2.0 instalado"
+info "tema v1.3 instalado (centro de seleção aprimorado + saída segura)"
+
+if [[ -f "$HOME/Library/LaunchAgents/com.lookaretro.pegasus.plist" ]]; then
+    cp -f "$REPO/launchd/com.lookaretro.pegasus.plist" "$HOME/Library/LaunchAgents/"
+    info "LaunchAgent atualizado com flags seguras (sem desligamento acidental)"
+fi
 
 {
     echo "# LookaRetro game directories"
-    for s in snes gbc gba n64 nds psx wii 3ds switch; do echo "$R/roms/$s"; done
+    for s in snes gbc gba n64 nds psx wii 3ds switch psvita; do echo "$R/roms/$s"; done
     echo "$R/roms-open-source"
     echo "$R/roms-settings"
 } > "$PEG/game_dirs.txt"

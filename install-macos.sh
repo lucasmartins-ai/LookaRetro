@@ -238,7 +238,7 @@ fi
 if [[ "$DRY_RUN" -eq 0 ]]; then
     {
         echo "# LookaRetro game directories"
-        for s in snes gbc gba n64 nds psx wii 3ds switch; do
+        for s in snes gbc gba n64 nds psx wii 3ds switch psvita; do
             echo "$RETRO_HOME/roms/$s"
         done
         echo "$RETRO_HOME/roms-open-source"

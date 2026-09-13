@@ -7,6 +7,9 @@
     <key>ProgramArguments</key>
     <array>
         <string>/Applications/Pegasus.app/Contents/MacOS/pegasus-fe</string>
+        <string>--disable-menu-shutdown</string>
+        <string>--disable-menu-reboot</string>
+        <string>--disable-menu-suspend</string>
     </array>
     <key>LimitLoadToSessionType</key>
     <string>Aqua</string>

@@ -2,7 +2,7 @@
 Type=Application
 Name=LookaRetro (Pegasus)
 Comment=Retro console frontend
-Exec=@PEG_DIR@/pegasus-fe
+Exec=@PEG_DIR@/pegasus-fe --disable-menu-shutdown --disable-menu-reboot --disable-menu-suspend
 Icon=applications-games
 Terminal=false
 Categories=Game;Emulator;

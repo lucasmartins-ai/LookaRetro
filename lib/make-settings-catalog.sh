@@ -34,7 +34,7 @@ entry() {  # $1 = nome  $2 = ação  $3 = stub  $4 = descrição
         printf 'launch: "%s" %s\n' "$SETTINGS" "$2"
         printf 'developer: LookaDev\n'
         printf 'genre: Configuração\n'
-        printf '\n%s\n\n' "$4"
+        printf 'summary: %s\n\n' "$4"
     } >> "$META"
 }
 
