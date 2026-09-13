@@ -4,7 +4,7 @@
 # Usage:
 #   launch.sh <system> <rom-path>
 #
-# <system> is one of: snes gbc gba n64 nds psx wii
+# <system> is one of: snes gbc gba n64 nds psx wii 3ds switch
 #
 # Called by Pegasus Frontend from each system's metadata.pegasus.txt via the
 # `launch:` line. Deployed to $RETRO_HOME/scripts/launch.sh by the installer.
@@ -27,6 +27,8 @@ if [[ "$OS" == "Darwin" ]]; then
     RETROARCH=( "/Applications/RetroArch.app/Contents/MacOS/RetroArch" )
     DUCKSTATION=( "/Applications/DuckStation.app/Contents/MacOS/DuckStation" )
     DOLPHIN=( "/Applications/Dolphin.app/Contents/MacOS/Dolphin" )
+    AZAHAR=( "/Applications/Azahar.app/Contents/MacOS/azahar" )
+    RYUJINX=( "/Applications/Ryujinx.app/Contents/MacOS/Ryujinx" )
     CORES_DIR="${CORES_DIR:-$HOME/Library/Application Support/RetroArch/cores}"
     CORE_EXT="dylib"
     # Pegasus Frontend has no arm64 macOS build (it runs x86_64 under Rosetta),
@@ -40,12 +42,16 @@ if [[ "$OS" == "Darwin" ]]; then
         RETROARCH=( /usr/bin/arch -arm64 "${RETROARCH[0]}" )
         DUCKSTATION=( /usr/bin/arch -arm64 "${DUCKSTATION[0]}" )
         DOLPHIN=( /usr/bin/arch -arm64 "${DOLPHIN[0]}" )
+        AZAHAR=( /usr/bin/arch -arm64 "${AZAHAR[0]}" )
+        RYUJINX=( /usr/bin/arch -arm64 "${RYUJINX[0]}" )
     fi
 elif [[ "$OS" == "Linux" ]]; then
     # Emulators are installed as Flatpaks (see install-linux.sh).
     RETROARCH=( flatpak run org.libretro.RetroArch )
     DUCKSTATION=( flatpak run org.duckstation.DuckStation )
     DOLPHIN=( flatpak run org.DolphinEmu.dolphin-emu )
+    AZAHAR=( flatpak run org.azahar_emu.azahar )
+    RYUJINX=( flatpak run org.ryujinx.Ryujinx )
     CORES_DIR="${CORES_DIR:-$HOME/.var/app/org.libretro.RetroArch/config/retroarch/cores}"
     CORE_EXT="so"
 else
@@ -65,9 +71,15 @@ case "$SYSTEM" in
     wii)
         exec "${DOLPHIN[@]}" -e "$ROM"
         ;;
+    3ds)
+        exec "${AZAHAR[@]}" -f "$ROM"
+        ;;
+    switch)
+        exec "${RYUJINX[@]}" --fullscreen "$ROM"
+        ;;
     *)
         echo "Unknown system: $SYSTEM" >&2
-        echo "Valid systems: snes gbc gba n64 nds psx wii" >&2
+        echo "Valid systems: snes gbc gba n64 nds psx wii 3ds switch" >&2
         exit 2
         ;;
 esac

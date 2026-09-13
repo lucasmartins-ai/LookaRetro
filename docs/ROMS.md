@@ -118,6 +118,10 @@ Veja [docs/METADATA.md](METADATA.md) para o formato completo.
 | DS | `.nds` | — |
 | PS1 | `.chd` (1 arquivo por jogo, comprimido) | ou `.cue`+`.bin`; `.m3u` p/ multi-discos |
 | Wii | `.wbfs` (só o jogo, comprimido) | `.rvz` também; evite `.iso` cheio p/ economizar espaço |
+| Nintendo 3DS | `.3ds` / `.cci` / `.cxi` (descriptografado) | Emulador Azahar; `.3ds`/`.cci` descriptografados rodam direto |
+| Nintendo Switch | `.nsp` / `.xci` | Emulador Ryujinx; requer `prod.keys` em `~/Library/Application Support/Ryujinx/system/` |
 
 > PS1: `.chd` é o mais prático — converte com `chdman` (vem com o MAME) mantendo um arquivo só por disco.
 > Wii: `.wbfs` remove o "lixo" do disco e ocupa muito menos.
+> 3DS: As ROMs comerciais de 3DS para emuladores devem ser **descriptografadas** (decrypted `.3ds` ou `.cci`). Excelente para **Digimon World Re:Digitize Decode** (com patch PT/EN) e jogos Pokémon da geração 6 e 7.
+> Switch: Para **Digimon World: Next Order** e Pokémon (**Sword/Shield**, **Scarlet/Violet**, **Legends: Arceus**), use `.nsp` ou `.xci`. O Ryujinx já está pré-configurado com modo Docked 1080p, upscaling FSR e filtragem anisotrópica 16x.

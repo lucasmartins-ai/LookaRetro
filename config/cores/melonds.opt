@@ -1,0 +1,7 @@
+# LookaRetro — melonDS core options (Nintendo DS)
+# Otimizações de renderização e áudio para Pokémon no Nintendo DS.
+melonds_threaded_renderer = "enabled"
+melonds_screen_layout = "Top/Bottom"
+melonds_touch_mode = "Touch"
+melonds_audio_bitrate = "Auto"
+melonds_audio_interpolation = "Cosine"

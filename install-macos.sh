@@ -44,6 +44,8 @@ done
 # Version pins (known-good macOS builds)
 PEGASUS_URL="https://github.com/mmatyas/pegasus-frontend/releases/download/weekly_2024w38/pegasus-fe_alpha16-82-gc3462e68_macos-static.zip"
 DUCKSTATION_URL="https://github.com/stenzek/duckstation/releases/latest/download/duckstation-mac-release.zip"
+AZAHAR_URL="https://github.com/azahar-emu/azahar/releases/download/2126.1.1/azahar-macos-arm64-2126.1.1.zip"
+RYUJINX_URL="https://github.com/ADEMOLA200/Ryujinx-Stable-Builds/releases/download/stable-1.2.86/ryujinx-1.2.86-macos_universal.app.tar.gz"
 RETROARCH_CORES_BASE="https://buildbot.libretro.com/nightly/apple/osx/arm64/latest"
 
 CORES=(
@@ -110,22 +112,27 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 2. DuckStation + Pegasus (direct downloads, universal/macOS builds)
+# 2. DuckStation, Azahar, Ryujinx + Pegasus (direct downloads, universal/macOS builds)
 # ---------------------------------------------------------------------------
-step "Installing DuckStation (PS1) and Pegasus Frontend (UI)"
+step "Installing DuckStation (PS1), Azahar (3DS), Ryujinx (Switch) and Pegasus Frontend (UI)"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
-install_from_zip() {
-    local url="$1" appname="$2" binary_hint="$3"
-    local zip="$TMP_DIR/$(basename "$url")"
+install_app_archive() {
+    local url="$1" appname="$2"
+    local archive="$TMP_DIR/$(basename "$url")"
     info "Downloading $appname..."
-    run curl -fL --retry 3 -o "$zip" "$url"
+    run curl -fL --retry 3 -o "$archive" "$url"
     if [[ "$DRY_RUN" -eq 1 ]]; then
         info "Would extract and install $appname -> /Applications"
         return 0
     fi
-    run unzip -q -o "$zip" -d "$TMP_DIR/$appname"
+    mkdir -p "$TMP_DIR/$appname"
+    if [[ "$archive" == *.tar.gz ]]; then
+        run tar -xzf "$archive" -C "$TMP_DIR/$appname"
+    else
+        run unzip -q -o "$archive" -d "$TMP_DIR/$appname"
+    fi
     local app
     app="$(find "$TMP_DIR/$appname" -maxdepth 2 -name "*.app" -print -quit)"
     if [[ -z "$app" ]]; then
@@ -137,10 +144,13 @@ install_from_zip() {
         rm -rf "/Applications/$appname.app"
     fi
     ditto "$app" "/Applications/$appname.app"
+    xattr -cr "/Applications/$appname.app" 2>/dev/null || true
     info "$appname installed."
 }
 
-install_from_zip "$DUCKSTATION_URL" "DuckStation" "DuckStation"
+install_app_archive "$DUCKSTATION_URL" "DuckStation"
+install_app_archive "$AZAHAR_URL" "Azahar"
+install_app_archive "$RYUJINX_URL" "Ryujinx"
 
 # Pegasus macOS build is x86_64 -> needs Rosetta 2 on Apple Silicon.
 if arch_ok && ! rosetta_ok; then
@@ -150,7 +160,7 @@ if arch_ok && ! rosetta_ok; then
         softwareupdate --install-rosetta --agree-to-license || warn "Rosetta install failed; you can also run it manually."
     fi
 fi
-install_from_zip "$PEGASUS_URL" "Pegasus" "pegasus-fe"
+install_app_archive "$PEGASUS_URL" "Pegasus"
 
 # ---------------------------------------------------------------------------
 # 3. RetroArch cores
@@ -177,10 +187,10 @@ done
 # 4. Deploy console root
 # ---------------------------------------------------------------------------
 step "Deploying configs, scripts and theme to $RETRO_HOME"
-for d in roms scripts config/cores config/dolphin config/remaps catalog; do
+for d in roms scripts config/cores config/dolphin config/remaps config/3ds config/switch catalog; do
     run mkdir -p "$RETRO_HOME/$d"
 done
-for s in snes gbc gba n64 nds psx wii; do
+for s in snes gbc gba n64 nds psx wii 3ds switch; do
     run mkdir -p "$RETRO_HOME/roms/$s"
 done
 
@@ -228,7 +238,7 @@ fi
 if [[ "$DRY_RUN" -eq 0 ]]; then
     {
         echo "# LookaRetro game directories"
-        for s in snes gbc gba n64 nds psx wii; do
+        for s in snes gbc gba n64 nds psx wii 3ds switch; do
             echo "$RETRO_HOME/roms/$s"
         done
         echo "$RETRO_HOME/roms-open-source"
@@ -281,6 +291,7 @@ if [[ "$DRY_RUN" -eq 0 ]]; then
         cp -f "$REPO_DIR/config/cores/$optname" "$RA_CFG_DIR/config/$corename/$optname"
     }
     install_core_options "Mupen64Plus-Next" "Mupen64Plus-Next.opt"
+    install_core_options "melonDS"          "melonds.opt"
 
     # Remaps per-core (layout padronizado confirmar=A / cancelar=B no pad
     # Xbox) -> the active RetroArch remaps dir; RetroArch auto-loads them
@@ -304,6 +315,20 @@ if [[ "$DRY_RUN" -eq 0 ]]; then
     # mapped to Xbox controllers; SDL/0 = P1, SDL/1 = P2).
     cp -f "$REPO_DIR/config/dolphin/GCPadNew.ini"  "$DOLPHIN_CFG_DIR/GCPadNew.ini"
     cp -f "$REPO_DIR/config/dolphin/WiimoteNew.ini" "$DOLPHIN_CFG_DIR/WiimoteNew.ini"
+
+    # Azahar 3DS config (4x resolution, xBRZ, large screen layout)
+    AZAHAR_CFG_DIR="$HOME/Library/Application Support/Azahar/config"
+    mkdir -p "$AZAHAR_CFG_DIR"
+    if [[ -f "$REPO_DIR/config/3ds/qt-config.ini" ]]; then
+        cp -f "$REPO_DIR/config/3ds/qt-config.ini" "$AZAHAR_CFG_DIR/qt-config.ini"
+    fi
+
+    # Ryujinx Switch config (Docked 1080p, FSR 80%, 16x AF, SMAA, Vulkan)
+    RYUJINX_CFG_DIR="$HOME/Library/Application Support/Ryujinx"
+    mkdir -p "$RYUJINX_CFG_DIR"
+    if [[ -f "$REPO_DIR/config/switch/Config.json" && ! -f "$RYUJINX_CFG_DIR/Config.json" ]]; then
+        cp -f "$REPO_DIR/config/switch/Config.json" "$RYUJINX_CFG_DIR/Config.json"
+    fi
 else
     info "Would write RetroArch config + per-core overrides + Dolphin GFX.ini"
 fi

@@ -3,12 +3,12 @@
 Transforme um PC (ou Mac) em um **console retro** com interface bonita, quase zero input lag e persistência (continua rodando com a tampa fechada / sem hibernar).
 
 - **UI/UX:** [Pegasus Frontend](https://pegasus-frontend.org) (open source) com o tema customizado **LookaRetro** — visual retrô em **pixel-art (Nintendo) + Senhor dos Anéis**, scanlines de CRT e a marca **LookaDev**.
-- **Emuladores (todos open source):** RetroArch (SNES/GBC/GBA/N64/DS), DuckStation (PS1), Dolphin (Wii).
-- **Sistemas:** SNES · Game Boy Color · Game Boy Advance · Nintendo 64 · Nintendo DS · PlayStation 1 · Wii.
+- **Emuladores (todos open source):** RetroArch (SNES/GBC/GBA/N64/DS), DuckStation (PS1), Dolphin (Wii), Azahar (3DS), Ryujinx (Switch).
+- **Sistemas:** SNES · Game Boy Color · Game Boy Advance · Nintendo 64 · Nintendo DS · PlayStation 1 · Wii · Nintendo 3DS · Nintendo Switch.
 - **Plataformas:** macOS (Apple Silicon) · Windows 10/11 · Linux (Flatpak).
 - **Catálogo Open Source:** coleção de jogos homebrew com **download automático** na primeira execução (Adjustris, uCity, Celeste Classic, demos SNES/N64…) — veja [docs/ROMS.md](docs/ROMS.md).
 
-> **Nota sobre ROMs:** jogos comerciais (Zelda, Pokémon, Tekken, Gran Turismo etc.) **não são open source** e são protegidos por copyright. Este projeto cuida de **toda a parte técnica** (emuladores, interface, configs) — as ROMs desses títulos devem vir de **cópias que você mesmo extraiu** dos seus cartuchos/discos. Existem alternativas genuinamente open source (homebrew) listadas em [docs/ROMS.md](docs/ROMS.md).
+> **Nota sobre ROMs:** jogos comerciais (Zelda, Pokémon, Tekken, Gran Turismo, Digimon etc.) **não são open source** e são protegidos por copyright. Este projeto cuida de **toda a parte técnica** (emuladores, interface, configs) — as ROMs desses títulos devem vir de **cópias que você mesmo extraiu** dos seus cartuchos/discos. Existem alternativas genuinamente open source (homebrew) listadas em [docs/ROMS.md](docs/ROMS.md).
 
 ---
 
@@ -20,7 +20,7 @@ Transforme um PC (ou Mac) em um **console retro** com interface bonita, quase ze
 | **Windows** | `powershell -ExecutionPolicy Bypass -File .\install-windows.ps1` |
 | **Linux** | `./install-linux.sh` (+ `./install-linux.sh --system` p/ tampa fechada) |
 
-Cada instalador: baixa/instala os emuladores, implanta as configs de baixo lag, instala o tema **LookaRetro**, liga o Pegasus às pastas de ROMs e gera a lista de jogos.
+Cada instalador: baixa/instala os emuladores, implanta as configs de baixo lag e alta fidelidade gráfica, instala o tema **LookaRetro**, liga o Pegasus às pastas de ROMs e gera a lista de jogos.
 
 Guia detalhado por plataforma: [docs/WINDOWS.md](docs/WINDOWS.md) · [docs/LINUX.md](docs/LINUX.md) · macOS na seção abaixo.
 
@@ -33,6 +33,8 @@ Guia detalhado por plataforma: [docs/WINDOWS.md](docs/WINDOWS.md) · [docs/LINUX
 | SNES/GBC/GBA/N64/DS | RetroArch (universal/Metal, arm64) | RetroArch (winget) | RetroArch (`org.libretro.RetroArch`) |
 | PlayStation 1 | DuckStation (nativo) | DuckStation (zip) | DuckStation (`org.duckstation.DuckStation`) |
 | Wii | Dolphin (nativo) | Dolphin (winget) | Dolphin (`org.DolphinEmu.dolphin-emu`) |
+| Nintendo 3DS | Azahar (nativo arm64) | Azahar / Lime3DS | Azahar (`azahar.AppImage`) |
+| Nintendo Switch | Ryujinx (universal arm64) | Ryujinx | Ryujinx |
 | UI | Pegasus (x86_64/Rosetta 2) | Pegasus (`pegasus-fe.exe`) | Pegasus (x11-static) |
 
 Os cores do RetroArch (Snes9x, Gambatte, mGBA, mupen64plus-next, melonDS) são baixados direto do [buildbot.libretro.com](https://buildbot.libretro.com) — open source, sem bins fechados.
@@ -92,6 +94,8 @@ Detalhes em [docs/LINUX.md](docs/LINUX.md).
 | Nintendo DS | `roms/nds/` | `.nds` `.dsi` |
 | PlayStation 1 | `roms/psx/` | `.cue` `.chd` `.pbp` `.m3u` `.iso` |
 | Wii | `roms/wii/` | `.wbfs` `.rvz` `.iso` `.ciso` |
+| Nintendo 3DS | `roms/3ds/` | `.3ds` `.cci` `.cxi` `.app` |
+| Nintendo Switch | `roms/switch/` | `.nsp` `.xci` `.nsz` |
 
 A pasta raiz é `~/Retro` (macOS/Linux) ou `%USERPROFILE%\Retro` (Windows), configurável via `RETRO_HOME`.
 

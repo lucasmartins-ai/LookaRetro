@@ -48,7 +48,7 @@ info "tema v1.2.0 instalado"
 
 {
     echo "# LookaRetro game directories"
-    for s in snes gbc gba n64 nds psx wii; do echo "$R/roms/$s"; done
+    for s in snes gbc gba n64 nds psx wii 3ds switch; do echo "$R/roms/$s"; done
     echo "$R/roms-open-source"
     echo "$R/roms-settings"
 } > "$PEG/game_dirs.txt"
@@ -77,6 +77,64 @@ if [[ "$(sysctl -n hw.optional.arm64 2>/dev/null)" == "1" ]]; then
 fi
 
 # ---------------------------------------------------------------------------
+# 1c. Instalar/atualizar emuladores de 3DS e Switch + refinamentos gráficos
+# ---------------------------------------------------------------------------
+step "Verificando emuladores de 3DS (Azahar) e Switch (Ryujinx)"
+AZAHAR_URL="https://github.com/azahar-emu/azahar/releases/download/2126.1.1/azahar-macos-arm64-2126.1.1.zip"
+RYUJINX_URL="https://github.com/ADEMOLA200/Ryujinx-Stable-Builds/releases/download/stable-1.2.86/ryujinx-1.2.86-macos_universal.app.tar.gz"
+
+if [[ ! -d "/Applications/Azahar.app" ]]; then
+    info "Baixando e instalando Azahar (3DS)..."
+    TMP_AZ="$(mktemp -d)"
+    curl -fL --retry 3 -o "$TMP_AZ/azahar.zip" "$AZAHAR_URL"
+    unzip -q -o "$TMP_AZ/azahar.zip" -d "$TMP_AZ/out"
+    rm -rf /Applications/Azahar.app
+    cp -R "$TMP_AZ/out"/*/Azahar.app /Applications/Azahar.app
+    xattr -cr /Applications/Azahar.app 2>/dev/null || true
+    rm -rf "$TMP_AZ"
+    info "Azahar.app instalado em /Applications"
+else
+    info "Azahar.app já instalado."
+    xattr -cr /Applications/Azahar.app 2>/dev/null || true
+fi
+
+if [[ ! -d "/Applications/Ryujinx.app" ]]; then
+    info "Baixando e instalando Ryujinx (Switch)..."
+    TMP_RYU="$(mktemp -d)"
+    curl -fL --retry 3 -o "$TMP_RYU/ryujinx.tar.gz" "$RYUJINX_URL"
+    tar -xzf "$TMP_RYU/ryujinx.tar.gz" -C "$TMP_RYU"
+    rm -rf /Applications/Ryujinx.app
+    cp -R "$TMP_RYU/Ryujinx.app" /Applications/Ryujinx.app
+    xattr -cr /Applications/Ryujinx.app 2>/dev/null || true
+    rm -rf "$TMP_RYU"
+    info "Ryujinx.app instalado em /Applications"
+else
+    info "Ryujinx.app já instalado."
+    xattr -cr /Applications/Ryujinx.app 2>/dev/null || true
+fi
+
+# Aplicar refinamentos visuais
+step "Aplicando refinamentos visuais (3DS, Switch, DS, PS1)"
+mkdir -p "$HOME/Library/Application Support/Azahar/config"
+if [[ -f "$REPO/config/3ds/qt-config.ini" ]]; then
+    cp -f "$REPO/config/3ds/qt-config.ini" "$HOME/Library/Application Support/Azahar/config/qt-config.ini"
+    info "Configurações visuais do 3DS aplicadas (4x res, xBRZ, tela dupla)."
+fi
+
+mkdir -p "$HOME/Library/Application Support/Ryujinx"
+if [[ -f "$REPO/config/switch/Config.json" && ! -f "$HOME/Library/Application Support/Ryujinx/Config.json" ]]; then
+    cp -f "$REPO/config/switch/Config.json" "$HOME/Library/Application Support/Ryujinx/Config.json"
+    info "Configurações visuais do Switch aplicadas (Docked 1080p, FSR 80%, 16x AF)."
+fi
+
+mkdir -p "$HOME/Library/Application Support/RetroArch/config/melonDS"
+if [[ -f "$REPO/config/cores/melonds.opt" ]]; then
+    cp -f "$REPO/config/cores/melonds.opt" "$HOME/Library/Application Support/RetroArch/config/melonDS/melonDS.opt"
+    cp -f "$REPO/config/cores/melonds.cfg" "$HOME/Library/Application Support/RetroArch/config/melonDS/melonDS.cfg"
+    info "Configurações de nitidez e layout do Nintendo DS (melonDS) aplicadas."
+fi
+
+# ---------------------------------------------------------------------------
 # 2. Organizar ROMs
 # ---------------------------------------------------------------------------
 if [[ ! -d "$ROM1" ]]; then
@@ -86,7 +144,7 @@ else
     TMP="$(mktemp -d)"
     trap 'rm -rf "$TMP"' EXIT
     mkdir -p "$R/roms/snes" "$R/roms/n64" "$R/roms/gba" "$R/roms/gbc" \
-             "$R/roms/nds" "$R/roms/psx" "$ROM1/_originais"
+             "$R/roms/nds" "$R/roms/psx" "$R/roms/3ds" "$R/roms/switch" "$ROM1/_originais"
 
     moved=0; skipped=0
     place() {  # $1=arquivo $2=pasta-destino
@@ -166,6 +224,18 @@ else
             say "  [incompleto, ignorado] $(basename "$cue") (sem .bin)"
         fi
     done
+
+    # 3DS (.3ds, .cci, .cxi, .app)
+    while IFS= read -r -d '' f; do place "$f" "$R/roms/3ds"; done < <(
+        find "$ROM1" -maxdepth 2 -type f \
+            \( -iname '*.3ds' -o -iname '*.cci' -o -iname '*.cxi' \) \
+            ! -name '._*' -print0 2>/dev/null || true )
+
+    # Switch (.nsp, .xci, .nsz)
+    while IFS= read -r -d '' f; do place "$f" "$R/roms/switch"; done < <(
+        find "$ROM1" -maxdepth 2 -type f \
+            \( -iname '*.nsp' -o -iname '*.xci' -o -iname '*.nsz' \) \
+            ! -name '._*' -print0 2>/dev/null || true )
 
     say ""
     say "ROMs movidas: $moved  |  ignoradas (já existiam): $skipped"

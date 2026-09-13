@@ -42,15 +42,17 @@ clean_title() {
     printf '%s' "$name"
 }
 
-for system in snes gbc gba n64 nds psx wii; do
+for system in snes gbc gba n64 nds psx wii 3ds switch; do
     case "$system" in
-        snes) title="Super Nintendo (SNES)"; exts="sfc smc fig swc bs" ;;
-        gbc)  title="Game Boy Color";        exts="gbc gb" ;;
-        gba)  title="Game Boy Advance";      exts="gba agb" ;;
-        n64)  title="Nintendo 64";           exts="z64 n64 v64 ndd" ;;
-        nds)  title="Nintendo DS";           exts="nds dsi" ;;
-        psx)  title="PlayStation 1";         exts="cue chd pbp m3u iso" ;;
-        wii)  title="Nintendo Wii";          exts="wbfs rvz iso ciso" ;;
+        snes)   title="Super Nintendo (SNES)"; exts="sfc smc fig swc bs" ;;
+        gbc)    title="Game Boy Color";        exts="gbc gb" ;;
+        gba)    title="Game Boy Advance";      exts="gba agb" ;;
+        n64)    title="Nintendo 64";           exts="z64 n64 v64 ndd" ;;
+        nds)    title="Nintendo DS";           exts="nds dsi" ;;
+        psx)    title="PlayStation 1";         exts="cue chd pbp m3u iso" ;;
+        wii)    title="Nintendo Wii";          exts="wbfs rvz iso ciso" ;;
+        3ds)    title="Nintendo 3DS";          exts="3ds cci cxi app" ;;
+        switch) title="Nintendo Switch";       exts="nsp xci nsz" ;;
     esac
 
     dir="$ROMS_DIR/$system"
